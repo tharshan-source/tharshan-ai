@@ -1,0 +1,108 @@
+---
+# ─────────────────────────────────────────────────────────────────────────
+# EXAMPLE ARTICLE: duplicate this file to start a new piece.
+# Because `draft: true`, it only appears when running the site locally
+# (npm run dev). It is never published to tharshan.ai.
+# ─────────────────────────────────────────────────────────────────────────
+title: 'Example article: how to format a piece for tharshan.ai'
+description: 'A template showing every formatting option the site supports. This text appears in lists, search results and link previews, so keep it to one or two sentences.'
+date: 2026-09-30
+# updated: 2026-10-15            # optional: set when you materially revise a piece
+category: 'Essay'                # Essay | Research note | Analysis | Notes | Experiment
+tags: ['Human-wrapped AI', 'Template']
+featured: false                  # true = pinned to the top of the homepage
+draft: true                      # set to false (or delete the line) to publish
+# slug: 'custom-url'             # optional: defaults to the file name
+# hero:                          # optional image at the top of the article
+#   src: './images/example.jpg'
+#   alt: 'Describe the image for screen readers'
+#   caption: 'Optional caption'
+references:                      # optional: listed at the end of the article
+  - title: 'Rjiba & Thavaharan (2022), Finance Research Letters'
+    url: 'https://doi.org/10.1016/j.frl.2022.103079'
+    note: 'Example of a reference entry'
+# originallyPublished:           # optional: for pieces migrated from LinkedIn or AI Experimenter
+#   where: 'LinkedIn'
+#   url: 'https://www.linkedin.com/…'
+---
+
+import Callout from '../../components/Callout.astro';
+import YouTube from '../../components/YouTube.astro';
+import LinkedInEmbed from '../../components/LinkedInEmbed.astro';
+
+**This is sample text to demonstrate formatting. Delete it all when you write a real piece.**
+
+The opening paragraph sits at full reading size. Write normally in Markdown: a blank line starts a new paragraph, `**bold**` for **bold**, `*italic*` for *italic*, and `[text](https://example.com)` for [a link](https://doi.org/10.1016/j.frl.2022.103079).
+
+## A section heading
+
+Use `##` for main sections and `###` for sub-sections. They create anchor links automatically, so you can link to a section with `#a-section-heading`.
+
+### A sub-section
+
+Lists work as you'd expect:
+
+- An unordered item
+- Another item, which can run long enough to wrap onto a second line on a phone
+- A third
+
+1. A numbered item
+2. A second numbered item
+
+> A block quotation. Use it for quoting someone else's words, and attribute them in the surrounding text.
+
+Footnotes are written like this.[^1] They collect automatically at the bottom of the article, with links back to where they were cited.[^2]
+
+## Tables
+
+| Measure | What it captures | Source |
+| --- | --- | --- |
+| Emission intensity | Scope 1 + 2 CO₂e divided by revenue | ASSET4 |
+| Board gender diversity | Share of female directors | Datastream |
+
+Wide tables scroll sideways on small screens rather than breaking the layout.
+
+## Callouts
+
+<Callout label="Note">
+A callout is for an aside that the reader should not miss: a caveat, a definition, a method note.
+</Callout>
+
+<Callout label="My view" variant="view">
+The `view` variant marks a passage as your own interpretation, which is useful in research notes to separate what the evidence says from what you think it means.
+</Callout>
+
+## Images
+
+Put images in a folder next to your article (for example `src/content/writing/images/`) and reference them with standard Markdown: `![Alt text describing the image](./images/chart.png)`. They are resized and optimised automatically.
+
+## Embeds
+
+Embeds need an import line at the top of the file (see the three `import` lines under the frontmatter), which means the file must end in `.mdx`.
+
+A YouTube video:
+
+```mdx
+<YouTube id="VIDEO_ID" title="Describe the video" />
+```
+
+A LinkedIn post:
+
+<LinkedInEmbed urn="urn:li:activity:7358126103502168064" title="The WRAP Framework on LinkedIn" height={640} />
+
+A TikTok: `<TikTok id="VIDEO_ID" title="…" />`, with `import TikTok from '../../components/TikTok.astro';` at the top.
+
+## Code
+
+```python
+# Code blocks are highlighted and scroll horizontally if long.
+def emission_intensity(tonnes_co2e: float, revenue_usd: float) -> float:
+    return tonnes_co2e / revenue_usd
+```
+
+---
+
+A horizontal rule (`---`) separates parts of a piece.
+
+[^1]: This is the first footnote. It can include [links](https://doi.org/10.1016/j.frl.2022.103079).
+[^2]: And a second one.

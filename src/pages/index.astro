@@ -1,0 +1,105 @@
+---
+import Base from '../layouts/Base.astro';
+import SectionHead from '../components/SectionHead.astro';
+import WritingItem from '../components/WritingItem.astro';
+import ResearchItem from '../components/ResearchItem.astro';
+import VideoItem from '../components/VideoItem.astro';
+import { getWriting, getResearch, getVideos, pick } from '../lib/content';
+import { SITE } from '../site.config';
+
+const writing = pick(await getWriting(), 5);
+const research = pick(await getResearch(), 2);
+const videos = pick(await getVideos(), 3);
+
+const jsonLd = [
+  { '@context': 'https://schema.org', '@type': 'WebSite', name: 'tharshan.ai', url: SITE.url, author: { '@id': `${SITE.url}/#person` } },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': `${SITE.url}/#person`,
+    name: SITE.fullName,
+    alternateName: SITE.name,
+    url: SITE.url,
+    sameAs: [SITE.linkedin],
+    worksFor: { '@type': 'Organization', name: 'Cloud Capital' },
+  },
+];
+---
+
+<Base masthead jsonLd={jsonLd}>
+  <div slot="masthead" class="intro">
+    <h1>Hi, I’m Tharshan.</h1>
+    <p class="lede">
+      I build in AI, and I study what shapes its outcomes: the people, incentives and governance wrapped around the models.
+    </p>
+    <div class="body">
+      <p>
+        I’m currently at Cloud Capital, working with CFOs, CTOs and investors to underwrite AI and cloud infrastructure spend.
+        Before that I founded AI Launchpad, which accelerated 350+ startups from 90+ countries, and built and exited
+        a bootstrapped AI platform with friends. My doctoral research is published in <a href="/research/female-representation-boards-carbon-emissions"><em>Finance Research Letters</em></a>.
+      </p>
+      <p>This site is where I publish research, essays and notes on how AI is built, financed and governed.</p>
+    </div>
+  </div>
+
+  <section class="section wrap" aria-labelledby="h-writing">
+    <SectionHead id="h-writing" title="Writing" href={writing.length ? '/writing' : undefined} linkLabel="All writing" />
+    {writing.length ? (
+      <ul class="entries">{writing.map((entry) => <WritingItem entry={entry} />)}</ul>
+    ) : (
+      <div class="empty">
+        <p>The first essays and research notes are being written and will appear here.</p>
+        <p class="follow">Follow along via <a href="/rss.xml">RSS</a> or <a href={SITE.linkedin} rel="noopener" target="_blank" class="ext">LinkedIn</a></p>
+      </div>
+    )}
+  </section>
+
+  <section class="section wrap" aria-labelledby="h-research">
+    <SectionHead id="h-research" title="Research" href="/research" linkLabel="All research" />
+    <ul class="entries">{research.map((entry) => <ResearchItem entry={entry} />)}</ul>
+  </section>
+
+  <section class="section wrap" aria-labelledby="h-videos">
+    <SectionHead id="h-videos" title="Videos" href="/videos" linkLabel="All videos" />
+    <ul class="video-grid">{videos.map((entry) => <VideoItem entry={entry} compact />)}</ul>
+  </section>
+
+  <section class="section wrap" aria-labelledby="h-background">
+    <SectionHead id="h-background" title="Background" href="/about" linkLabel="About" />
+    <dl class="ledger">
+      <div><dt>Now</dt><dd><strong>Cloud Capital.</strong> Working with CFOs, CTOs and investors to underwrite AI and cloud infrastructure spend.</dd></div>
+      <div><dt>Founded</dt><dd><strong>AI Launchpad.</strong> An accelerator for AI founders, built at Paddle: 350+ startups from 90+ countries.</dd></div>
+      <div><dt>Built</dt><dd><strong>A bootstrapped AI platform</strong>, built with friends and exited.</dd></div>
+      <div><dt>Research</dt><dd><strong>Doctoral research</strong> at Paris School of Business on governance and corporate carbon outcomes, published in <em>Finance Research Letters</em>.</dd></div>
+      <div><dt>Advise</dt><dd>Builders, investors and governments on policy and investment decisions in <strong>human-wrapped AI</strong>.</dd></div>
+    </dl>
+  </section>
+</Base>
+
+<style>
+  .intro { max-width: 46rem; }
+  h1 { font-size: var(--step-4); font-weight: 400; letter-spacing: -0.03em; line-height: 1.02; }
+  .lede {
+    margin-top: clamp(1.25rem, 3vw, 2rem); font-size: var(--step-2); line-height: 1.28;
+    letter-spacing: -0.01em; color: var(--on-ink); max-width: 40rem;
+  }
+    .follow { margin-top: 0.6rem; font: 0.88rem/1.4 var(--sans); color: var(--text-faint); }
+  .body { margin-top: clamp(1.5rem, 3vw, 2.25rem); max-width: 37rem; color: var(--on-ink-muted); font-size: var(--step-0); line-height: 1.6; }
+  .body p + p { margin-top: 0.9em; }
+  .body a { color: var(--on-ink); text-decoration-color: var(--on-ink-muted); }
+  .body a:hover { color: var(--accent-on-ink); }
+
+  .video-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 2rem 1.75rem; }
+  @media (min-width: 46rem) { .video-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .ledger { margin: 0; max-width: 52rem; }
+  .ledger > div {
+    display: grid; grid-template-columns: 1fr; gap: 0.2rem 2rem; padding-block: 1rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .ledger > div:first-child { border-top: 1px solid var(--rule); }
+  @media (min-width: 46rem) { .ledger > div { grid-template-columns: 9rem 1fr; } }
+  dt { font: 600 0.74rem/1.9 var(--sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-faint); }
+  dd { margin: 0; line-height: 1.5; }
+  dd strong { font-weight: 600; }
+</style>

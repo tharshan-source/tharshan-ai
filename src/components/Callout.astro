@@ -1,0 +1,12 @@
+---
+/**
+ * Use in MDX:  <Callout label="Note">Text…</Callout>
+ * variant="view" marks a section as the author's own interpretation.
+ */
+interface Props { label?: string; variant?: 'default' | 'view' }
+const { label, variant = 'default' } = Astro.props;
+---
+<aside class:list={['callout', { 'callout--view': variant === 'view' }]}>
+  {label && <span class="label">{label}</span>}
+  <slot />
+</aside>

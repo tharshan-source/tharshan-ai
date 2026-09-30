@@ -1,0 +1,95 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Citation from '../../components/Citation.astro';
+import Abstract from '../../components/Abstract.astro';
+import { getResearch, slugOf, formatDate, isoDate } from '../../lib/content';
+import { SITE } from '../../site.config';
+
+export async function getStaticPaths() {
+  return (await getResearch()).map((entry) => ({ params: { slug: slugOf(entry) }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const slug = slugOf(entry);
+const doiUrl = d.doi ? `https://doi.org/${d.doi}` : d.url;
+const volumeLine = [d.volume && `Volume ${d.volume}`, d.issue && `Issue ${d.issue}`, d.articleNumber && `Article ${d.articleNumber}`, d.pages && `pp. ${d.pages}`].filter(Boolean).join(', ');
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ScholarlyArticle',
+  headline: d.title,
+  name: d.title,
+  author: d.authors.map((name) => (name === SITE.fullName ? { '@type': 'Person', name, url: SITE.url, sameAs: [SITE.linkedin] } : { '@type': 'Person', name })),
+  datePublished: isoDate(d.date),
+  isPartOf: { '@type': 'PublicationIssue', ...(d.issue && { issueNumber: d.issue }), isPartOf: { '@type': ['PublicationVolume', 'Periodical'], name: d.venue, ...(d.volume && { volumeNumber: d.volume }) } },
+  ...(d.doi && { identifier: { '@type': 'PropertyValue', propertyID: 'DOI', value: d.doi }, sameAs: doiUrl }),
+  ...(d.abstract && { abstract: d.abstract }),
+  keywords: d.keywords.join(', '),
+  url: `${SITE.url}/research/${slug}`,
+};
+---
+<Base title={d.title} description={d.description} type="article" image={`/og/research/${slug}.png`} published={d.date} tags={d.keywords} jsonLd={jsonLd}>
+  <Fragment slot="head">
+    <meta name="citation_title" content={d.title} />
+    {d.authors.map((a) => <meta name="citation_author" content={a} />)}
+    <meta name="citation_publication_date" content={d.date.toISOString().slice(0, 10).replace(/-/g, '/')} />
+    <meta name="citation_journal_title" content={d.venue} />
+    {d.volume && <meta name="citation_volume" content={d.volume} />}
+    {d.articleNumber && <meta name="citation_firstpage" content={d.articleNumber} />}
+    {d.doi && <meta name="citation_doi" content={d.doi} />}
+    {d.pdf && <meta name="citation_pdf_url" content={new URL(d.pdf, SITE.url).href} />}
+  </Fragment>
+  <article class="wrap paper">
+    <header class="head">
+      <p class="kicker"><a class="tag" href="/research">Research</a> <span class="tag">· {d.type}</span></p>
+      <h1>{d.title}</h1>
+      <dl class="facts">
+        <div><dt>Authors</dt><dd>{d.authors.join(', ')}</dd></div>
+        <div><dt>Journal</dt><dd><em>{d.venue}</em>{volumeLine && <>, {volumeLine}</>}</dd></div>
+        <div><dt>Published</dt><dd>Online <time datetime={isoDate(d.date)}>{formatDate(d.date)}</time>{d.issueDate && <>; in print {d.issueDate}</>}</dd></div>
+        {d.doi && <div><dt>DOI</dt><dd><a href={doiUrl} rel="noopener">{d.doi}</a></dd></div>}
+      </dl>
+      <p class="actions">
+        {doiUrl && <a class="cta" href={doiUrl} rel="noopener">Read at the publisher <span aria-hidden="true">↗</span></a>}
+        {d.pdf && <a class="cta" href={d.pdf} download>Download PDF</a>}
+        <a class="cta cta--quiet" href="#cite">Cite this paper</a>
+      </p>
+    </header>
+
+    <div class="prose body">
+      <Content components={{ Abstract }} />
+    </div>
+
+    <section class="prose cite" id="cite" aria-labelledby="h-cite">
+      <h2 id="h-cite">Citation</h2>
+      <Citation apa={d.citation.apa} bibtex={d.citation.bibtex} />
+    </section>
+
+    <section class="prose access" aria-labelledby="h-access">
+      <h2 id="h-access">Access</h2>
+      {d.pdf ? (
+        <p>The paper is available from the publisher via its <a href={doiUrl} rel="noopener">DOI</a>, and as a <a href={d.pdf} download>PDF</a>.</p>
+      ) : (
+        <p>The published version is available from the publisher via its <a href={doiUrl} rel="noopener">DOI</a>. It is not open access, so the publisher’s PDF is not hosted here.</p>
+      )}
+    </section>
+  </article>
+</Base>
+
+<style>
+  .paper { padding-top: clamp(2.5rem, 7vw, 5rem); }
+  .head { max-width: 50rem; }
+  h1 { font-size: var(--step-3); font-weight: 400; letter-spacing: -0.02em; line-height: 1.1; margin-top: 1rem; }
+  .kicker a { text-decoration: none; }
+  .facts { margin: 2rem 0 0; max-width: var(--measure); border-top: 1px solid var(--ink); }
+  .facts > div { display: grid; grid-template-columns: 6.5rem 1fr; gap: 1rem; padding-block: 0.65rem; border-bottom: 1px solid var(--rule); }
+  .facts dt { font: 600 0.72rem/1.9 var(--sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-faint); }
+  .facts dd { margin: 0; font-size: 1.02rem; line-height: 1.5; overflow-wrap: anywhere; }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem; }
+  .cta--quiet { border-color: var(--rule-strong); }
+  .body { margin-top: clamp(2.5rem, 6vw, 3.5rem); }
+  .cite, .access { margin-top: 3rem; }
+  .cite h2, .access h2 { font-size: var(--step-2); }
+</style>

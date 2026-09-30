@@ -1,0 +1,15 @@
+---
+/**
+ * <LinkedInEmbed urn="urn:li:activity:7358126103502168064" title="…" />
+ * Uses LinkedIn's official embed URL. Height varies by post; adjust if needed.
+ */
+interface Props { urn: string; title: string; height?: number }
+const { urn, title, height = 720 } = Astro.props;
+---
+<figure class="li-embed">
+  <iframe src={`https://www.linkedin.com/embed/feed/update/${urn}`} title={title} loading="lazy" height={height} allowfullscreen></iframe>
+</figure>
+<style>
+  .li-embed { margin-inline: 0; max-width: 34rem; }
+  .li-embed iframe { width: 100%; border: 1px solid var(--rule); border-radius: 2px; background: #fff; }
+</style>

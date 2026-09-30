@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import VideoItem from '../components/VideoItem.astro';
+import { getVideos } from '../lib/content';
+import { SITE } from '../site.config';
+const all = await getVideos();
+---
+<Base title="Videos" description="Short videos on AI economics, compute, agents and human-wrapped AI.">
+  <header class="wrap page-head">
+    <h1>Videos</h1>
+    <p class="lede">Short videos on AI economics, compute, agents and how AI actually gets used. Each one opens on the platform it was published on.</p>
+  </header>
+  <div class="wrap">
+    <ul class="list">{all.map((entry) => <VideoItem entry={entry} />)}</ul>
+    <p class="meta more"><a class="ext" href={`${SITE.linkedin}recent-activity/videos/`} rel="noopener" target="_blank">All videos on LinkedIn<span class="visually-hidden"> (opens in a new tab)</span></a></p>
+  </div>
+</Base>
+<style>
+  .list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+  .more { margin-top: 2rem; }
+</style>

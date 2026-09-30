@@ -1,0 +1,9 @@
+---
+/** Small uppercase label with a rule above, plus an optional "see all" link. */
+interface Props { title: string; href?: string; linkLabel?: string; id?: string }
+const { title, href, linkLabel = 'All', id } = Astro.props;
+---
+<div class="section-head">
+  <h2 id={id}>{title}</h2>
+  {href && <a href={href}>{linkLabel} <span aria-hidden="true">→</span></a>}
+</div>

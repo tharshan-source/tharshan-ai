@@ -1,0 +1,121 @@
+---
+/** Long-form article template for everything in src/content/writing. */
+import { Image } from 'astro:assets';
+import type { MarkdownHeading } from 'astro';
+import Base from './Base.astro';
+import WritingItem from '../components/WritingItem.astro';
+import { SITE } from '../site.config';
+import { type Writing, getWriting, slugOf, readingTime, formatDate, isoDate } from '../lib/content';
+
+interface Props { entry: Writing; headings: MarkdownHeading[] }
+const { entry } = Astro.props;
+const { title, description, date, updated, category, tags, hero, references, originallyPublished, draft } = entry.data;
+const slug = slugOf(entry);
+const minutes = readingTime(entry.body);
+const url = `${SITE.url}/writing/${slug}`;
+const others = (await getWriting()).filter((e) => e.id !== entry.id).slice(0, 3);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  datePublished: date.toISOString(),
+  dateModified: (updated ?? date).toISOString(),
+  author: { '@type': 'Person', name: SITE.fullName, url: SITE.url, sameAs: [SITE.linkedin] },
+  publisher: { '@type': 'Person', name: SITE.fullName, url: SITE.url },
+  mainEntityOfPage: url,
+  image: `${SITE.url}/og/writing/${slug}.png`,
+  articleSection: category,
+  keywords: tags.join(', '),
+};
+---
+
+<Base
+  title={title}
+  description={description}
+  type="article"
+  image={`/og/writing/${slug}.png`}
+  published={date}
+  modified={updated}
+  tags={tags}
+  jsonLd={jsonLd}
+  noindex={draft}
+>
+  <article class="wrap article">
+    <header class="head">
+      <p class="kicker"><a class="tag tag--accent" href="/writing">{category}</a>{draft && <span class="tag"> · Draft, not published</span>}</p>
+      <h1>{title}</h1>
+      <p class="dek">{description}</p>
+      <p class="meta byline">
+        <span>By {SITE.name}</span>
+        <time datetime={isoDate(date)}>{formatDate(date)}</time>
+        {minutes && <span>{minutes} min read</span>}
+        {updated && <span>Updated <time datetime={isoDate(updated)}>{formatDate(updated)}</time></span>}
+      </p>
+    </header>
+
+    {hero && (
+      <figure class="hero">
+        <Image src={hero.src} alt={hero.alt} widths={[640, 1024, 1600]} sizes="(min-width: 68rem) 64rem, 100vw" loading="eager" fetchpriority="high" />
+        {hero.caption && <figcaption>{hero.caption}</figcaption>}
+      </figure>
+    )}
+
+    <div class="prose body">
+      <slot />
+    </div>
+
+    {(references.length > 0 || originallyPublished) && (
+      <section class="prose refs" aria-labelledby="h-refs">
+        {references.length > 0 && (
+          <>
+            <h2 id="h-refs">References</h2>
+            <ol>
+              {references.map((r) => (
+                <li><a href={r.url} rel="noopener">{r.title}</a>{r.note && <span class="note">, {r.note}</span>}</li>
+              ))}
+            </ol>
+          </>
+        )}
+        {originallyPublished && (
+          <p class="meta">
+            Originally published {originallyPublished.url ? <a href={originallyPublished.url} rel="noopener">on {originallyPublished.where}</a> : <>on {originallyPublished.where}</>}
+            {originallyPublished.date && <> in {formatDate(originallyPublished.date, 'short')}</>}.
+          </p>
+        )}
+      </section>
+    )}
+
+    <footer class="end">
+      <p>Written by <a href="/about">{SITE.name}</a>. If this was useful, I’d be glad to hear what you think <a class="ext" href={SITE.linkedin} rel="noopener" target="_blank">on LinkedIn</a>.</p>
+      {tags.length > 0 && <p class="meta tags">{tags.map((t) => <span>{t}</span>)}</p>}
+    </footer>
+  </article>
+
+  {others.length > 0 && (
+    <section class="wrap section more" aria-labelledby="h-more">
+      <div class="section-head"><h2 id="h-more">More writing</h2><a href="/writing">All writing <span aria-hidden="true">→</span></a></div>
+      <ul class="entries">{others.map((e) => <WritingItem entry={e} />)}</ul>
+    </section>
+  )}
+</Base>
+
+<style>
+  .article { padding-top: clamp(2.5rem, 7vw, 5rem); }
+  .head { max-width: 48rem; }
+  .kicker a { text-decoration: none; }
+  h1 { font-size: var(--step-3); font-weight: 400; letter-spacing: -0.022em; line-height: 1.08; margin-top: 1rem; }
+  .dek { margin-top: 1.1rem; font-size: var(--step-1); line-height: 1.42; color: var(--text-muted); max-width: 40rem; }
+  .byline { margin-top: 1.6rem; padding-top: 1rem; border-top: 1px solid var(--rule); max-width: var(--measure); }
+  .hero { margin: clamp(2rem, 5vw, 3rem) 0 0; max-width: 64rem; }
+  .hero :global(img) { width: 100%; border-radius: 2px; }
+  .hero figcaption { margin-top: 0.6rem; font: 0.85rem/1.45 var(--sans); color: var(--text-faint); max-width: var(--measure); }
+  .body { margin-top: clamp(2rem, 5vw, 3rem); }
+  .body > :global(p:first-child) { font-size: 1.08em; }
+  .refs { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); font-size: 0.98rem; }
+  .refs h2 { font: 600 0.74rem/1.2 var(--sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-faint); margin: 0; }
+  .refs .note { color: var(--text-muted); }
+  .end { max-width: var(--measure); margin-top: 3rem; padding-top: 1.25rem; border-top: 1px solid var(--ink); font-size: 1.02rem; color: var(--text-muted); }
+  .end .tags { margin-top: 0.8rem; }
+</style>

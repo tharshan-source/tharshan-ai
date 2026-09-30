@@ -1,0 +1,8 @@
+---
+/** <TikTok id="7234567890123456789" title="…" /> — portrait embed via TikTok's player. */
+interface Props { id: string; title: string }
+const { id, title } = Astro.props;
+---
+<figure class="embed embed--portrait">
+  <iframe src={`https://www.tiktok.com/player/v1/${id}`} title={title} loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+</figure>

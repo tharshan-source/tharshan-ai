@@ -1,0 +1,9 @@
+---
+/** <YouTube id="dQw4w9WgXcQ" title="…" /> — privacy-enhanced embed, loads lazily. */
+interface Props { id: string; title: string }
+const { id, title } = Astro.props;
+---
+<figure class="embed">
+  <iframe src={`https://www.youtube-nocookie.com/embed/${id}`} title={title} loading="lazy"
+    allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</figure>

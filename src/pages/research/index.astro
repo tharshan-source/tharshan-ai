@@ -1,0 +1,17 @@
+---
+import Base from '../../layouts/Base.astro';
+import ResearchItem from '../../components/ResearchItem.astro';
+import { getResearch } from '../../lib/content';
+const all = await getResearch();
+---
+<Base title="Research" description="Published and peer-reviewed research by Tharshan Thavaharan on corporate governance and carbon outcomes.">
+  <header class="wrap page-head">
+    <h1>Research</h1>
+    <p class="lede">Published and substantive research. My doctoral work at Paris School of Business looks at how corporate governance shapes carbon outcomes.</p>
+  </header>
+  <div class="wrap">
+    <ul class="entries">{all.map((entry) => <ResearchItem entry={entry} />)}</ul>
+    <p class="meta note">Shorter research notes and working analysis are published under <a href="/writing">Writing</a>.</p>
+  </div>
+</Base>
+<style>.note { margin-top: 2rem; }</style>

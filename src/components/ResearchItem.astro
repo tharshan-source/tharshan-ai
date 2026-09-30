@@ -1,0 +1,21 @@
+---
+import type { Research } from '../lib/content';
+import { slugOf } from '../lib/content';
+interface Props { entry: Research }
+const { entry } = Astro.props;
+const { title, description, venue, year, authors, type } = entry.data;
+---
+<li class="entry">
+  <a href={`/research/${slugOf(entry)}`}>
+    <div class="entry-side"><span class="tag">{type}</span></div>
+    <div>
+      <p class="venue"><em>{venue}</em>, {year}</p>
+      <h3 class="entry-title">{title}</h3>
+      <p class="entry-desc">{description}</p>
+      <p class="meta"><span>{authors.join(' & ')}</span></p>
+    </div>
+  </a>
+</li>
+<style>
+  .venue { font-size: 1rem; color: var(--text-muted); margin-bottom: 0.25rem; }
+</style>

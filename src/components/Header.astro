@@ -1,0 +1,59 @@
+---
+import { NAV, SITE } from '../site.config';
+interface Props { masthead?: boolean }
+const { masthead = false } = Astro.props;
+const current = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => current === href || current.startsWith(href + '/');
+---
+
+<header class:list={['site-header', 'on-ink', { 'has-masthead': masthead }]}>
+  <div class="wrap bar">
+    <a class="wordmark" href="/" aria-label={`${SITE.name}, home`}>
+      Tharshan<span class="tld">.ai</span>
+    </a>
+    <nav aria-label="Primary">
+      <ul>
+        {NAV.map((item) => (
+          <li>
+            <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
+          </li>
+        ))}
+        <li>
+          <a class="ext linkedin" href={SITE.linkedin} rel="me noopener" target="_blank">LinkedIn<span class="visually-hidden"> (opens in a new tab)</span></a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  {masthead && <div class="wrap masthead"><slot /></div>}
+</header>
+
+<style>
+  .site-header { background: var(--ink); color: var(--on-ink); }
+  .bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.75rem 2rem;
+    flex-wrap: wrap; padding-block: 1.15rem;
+  }
+  .has-masthead .bar { padding-block: 1.4rem; }
+  .wordmark {
+    font-family: var(--serif); font-size: 1.35rem; font-weight: 500; letter-spacing: -0.01em;
+    text-decoration: none; color: var(--on-ink); line-height: 1;
+  }
+  .wordmark .tld { color: var(--on-ink-muted); font-weight: 400; }
+  .wordmark:hover { color: var(--on-ink); }
+  .wordmark:hover .tld { color: var(--accent-on-ink); }
+  nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.3rem 1.35rem; }
+  nav a {
+    font: 450 0.92rem/1 var(--sans); color: var(--on-ink-muted); text-decoration: none;
+    padding-block: 0.4rem; border-bottom: 1px solid transparent; transition: color 120ms ease;
+    display: inline-block;
+  }
+  nav a:hover { color: var(--on-ink); }
+  nav a[aria-current='page'] { color: var(--on-ink); border-bottom-color: var(--on-ink-muted); }
+  nav .linkedin { color: var(--on-ink); }
+  @media (max-width: 34rem) {
+    .bar { flex-direction: column; align-items: flex-start; padding-block: 1rem 0.6rem; }
+    nav ul { gap: 0.2rem 1.05rem; }
+    nav a { font-size: 0.9rem; padding-block: 0.5rem; }
+  }
+  .masthead { padding-block: clamp(2.5rem, 8vw, 6.5rem) clamp(3rem, 8vw, 6rem); }
+</style>

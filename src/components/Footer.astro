@@ -1,0 +1,31 @@
+---
+import { SITE } from '../site.config';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap inner">
+    <div>
+      <p class="name">Tharshan</p>
+      <p class="line">{SITE.footerLine}</p>
+    </div>
+    <ul class="links">
+      <li><a class="ext" href={SITE.linkedin} rel="me noopener" target="_blank">LinkedIn<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+      <li><a href="/rss.xml">RSS</a></li>
+      <li><span>© {year} {SITE.fullName}</span></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer { border-top: 1px solid var(--rule); margin-top: clamp(2rem, 5vw, 3.5rem); }
+  .inner {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 1.25rem 2rem;
+    padding-block: 2rem 2.5rem; font-family: var(--sans); font-size: 0.86rem; color: var(--text-faint);
+  }
+  .name { font-family: var(--serif); font-size: 1.1rem; color: var(--text); margin-bottom: 0.25rem; }
+  .line { max-width: 30rem; }
+  .links { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem; }
+  .links a { color: var(--text-muted); text-decoration: none; }
+  .links a:hover { color: var(--accent); }
+</style>

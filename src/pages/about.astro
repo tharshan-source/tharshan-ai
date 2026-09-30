@@ -1,0 +1,79 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../site.config';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  mainEntity: {
+    '@type': 'Person',
+    '@id': `${SITE.url}/#person`,
+    name: SITE.fullName,
+    alternateName: SITE.name,
+    url: SITE.url,
+    sameAs: [SITE.linkedin],
+    worksFor: { '@type': 'Organization', name: 'Cloud Capital' },
+    knowsAbout: ['AI economics', 'AI governance', 'Corporate governance', 'Carbon emissions', 'Startups', 'Venture investment'],
+  },
+};
+---
+<Base title="About" description="Tharshan Thavaharan builds in AI at Cloud Capital, founded AI Launchpad, and has published doctoral research in Finance Research Letters." type="profile" jsonLd={jsonLd}>
+  <header class="wrap page-head">
+    <h1>About</h1>
+    <p class="lede">I work on how AI is built, financed and governed, and on the people and institutions that decide how it turns out.</p>
+  </header>
+
+  <div class="wrap">
+    <div class="prose">
+      <h2>What I do</h2>
+      <p>
+        I’m at <strong>Cloud Capital</strong>, where I work with CFOs, CTOs and investors to underwrite AI and cloud infrastructure spend.
+        Much of that comes down to the economics underneath AI: what it actually costs to run, who is accountable for that cost, and how it should be financed.
+      </p>
+      <p>
+        Before that, at Paddle, I founded <strong>AI Launchpad</strong>, an accelerator for AI founders. Across its cohorts it accelerated more than
+        350 startups from over 90 countries, which is a useful way to see a technology wave from the inside, one early-stage company at a time.
+        I’ve also built and exited a bootstrapped AI platform with friends.
+      </p>
+      <p>
+        Alongside this, I advise builders, investors and governments on policy and investment decisions in human-wrapped AI.
+      </p>
+
+      <h2>Research</h2>
+      <p>
+        My doctoral research at Paris School of Business studies how corporate governance shapes carbon outcomes. Its main empirical work, co-authored
+        with Hatem Rjiba, was <a href="/research/female-representation-boards-carbon-emissions">published in <em>Finance Research Letters</em></a> in 2022.
+        Across 1,514 firms in 43 countries, companies with a higher share of women on their boards had lower carbon emission intensity.
+      </p>
+      <p>
+        While working on that research, I started asking the same question of AI, which was quickly becoming part of how companies make decisions.
+        If who sits around the boardroom table leaves a measurable mark on a company’s emissions, then who sits around an AI system probably matters just as much.
+      </p>
+
+      <h2 id="human-wrapped-ai">Human-wrapped AI</h2>
+      <p>
+        That’s the idea behind a phrase I use a lot: <strong>human-wrapped AI</strong>. AI outcomes are shaped not only by models, but by the people,
+        organisations, incentives, policies, economics and governance wrapped around them. The same model can produce very different results depending on
+        who decides where it is used, how it is paid for, who checks its work, and who is accountable when it is wrong.
+      </p>
+      <p>
+        The <a href="/videos">WRAP Framework</a>, a simple diagnostic for working out what an AI system actually is, is one early attempt to make that practical.
+      </p>
+
+      <h2>This site</h2>
+      <p>
+        This is where I publish research, essays, notes and the occasional experiment, all under my own name.
+        Some earlier experiments I published as AI Experimenter may move here over time.
+      </p>
+    </div>
+
+    <div class="contact">
+      <p>The best way to reach me is on LinkedIn.</p>
+      <a class="cta" href={SITE.linkedin} rel="me noopener" target="_blank">Connect on LinkedIn <span aria-hidden="true">↗</span></a>
+    </div>
+  </div>
+</Base>
+<style>
+  .prose h2:first-child { margin-top: 0.5rem; }
+  .contact { max-width: var(--measure); margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--ink); }
+  .contact p { margin-bottom: 1.1rem; color: var(--text-muted); }
+</style>
