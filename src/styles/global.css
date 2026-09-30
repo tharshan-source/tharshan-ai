@@ -2,7 +2,7 @@
  * tharshan.ai design system: "Terminal Editorial"
  * See DESIGN.md for the reasoning behind these choices.
  *
- * Dark by default; a matching light palette follows the reader's system setting.
+ * Dark by default; a light companion theme is available via the header toggle.
  * Two typographic voices: IBM Plex Serif for ideas and prose,
  * IBM Plex Mono for navigation, metadata and structure.
  * One accent (phosphor green), used as a signal only.
@@ -40,22 +40,22 @@
   color-scheme: dark;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #f3f0e8;
-    --bg-2: #e9e5da;
-    --text: #1a1c1d;
-    --prose: #26292a;
-    --muted: #55534e;
-    --faint: #67645d;
-    --rule: #d6d1c5;
-    --rule-2: #bfb9ac;
-    --accent: #336b3a;
-    --accent-2: #24522a;
-    --inv-bg: #1a1c1d;
-    --inv-fg: #f3f0e8;
-    color-scheme: light;
-  }
+/* Light companion theme: chosen by the reader via the dark / light control
+   (stored in localStorage). Dark is the default for first-time visitors. */
+:root[data-theme='light'] {
+  --bg: #f3f0e8;
+  --bg-2: #e9e5da;
+  --text: #1a1c1d;
+  --prose: #26292a;
+  --muted: #55534e;
+  --faint: #67645d;
+  --rule: #d6d1c5;
+  --rule-2: #bfb9ac;
+  --accent: #336b3a;
+  --accent-2: #24522a;
+  --inv-bg: #1a1c1d;
+  --inv-fg: #f3f0e8;
+  color-scheme: light;
 }
 
 /* ---------- Base ---------- */

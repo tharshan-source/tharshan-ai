@@ -20,12 +20,42 @@ const isActive = (href: string) => current === href || current.startsWith(href +
         </li>
       </ul>
     </nav>
+    <button class="theme" type="button" aria-label="Switch to light theme" title="Switch theme">
+      <span class="t-dark">dark</span><span class="sep" aria-hidden="true"> / </span><span class="t-light">light</span>
+    </button>
   </div>
 </header>
 
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('.theme');
+  const root = document.documentElement;
+  const label = () => {
+    const t = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    btn?.setAttribute('aria-label', t === 'dark' ? 'Theme: dark. Switch to light theme' : 'Theme: light. Switch to dark theme');
+  };
+  label();
+  btn?.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', next);
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'light' ? '#f3f0e8' : '#0d0f10');
+    try { localStorage.setItem('theme', next); } catch {}
+    label();
+  });
+</script>
+
 <style>
   .site-header { border-bottom: 1px solid var(--rule); }
-  .bar { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem 2rem; flex-wrap: wrap; padding-block: 1.25rem; }
+  .bar { display: flex; align-items: baseline; gap: 0.75rem 2rem; flex-wrap: wrap; padding-block: 1.25rem; }
+  .bar nav { margin-left: auto; }
+  .theme {
+    font: 400 0.78rem/1 var(--mono); color: var(--faint); background: none; border: 0;
+    padding: 0.4rem 0; cursor: pointer; white-space: nowrap;
+  }
+  .theme .sep { color: var(--rule-2); }
+  .theme:hover { color: var(--muted); }
+  .theme:focus-visible { background: var(--inv-bg); color: var(--inv-fg); }
+  :global([data-theme='dark']) .theme .t-dark,
+  :global([data-theme='light']) .theme .t-light { color: var(--accent); }
   .wordmark { font: 500 1rem/1 var(--mono); letter-spacing: -0.01em; text-decoration: none; color: var(--text); }
   .wordmark .caret { color: var(--accent); }
   .wordmark:hover { color: var(--text); }
@@ -41,7 +71,9 @@ const isActive = (href: string) => current === href || current.startsWith(href +
   nav a[aria-current='page']::before, nav a[aria-current='page']::after { color: var(--accent); }
   nav .out span[aria-hidden] { color: var(--accent); }
   @media (max-width: 40rem) {
-    .bar { flex-direction: column; align-items: flex-start; padding-block: 1.1rem 0.7rem; }
+    .bar { display: grid; grid-template-columns: 1fr auto; align-items: baseline; row-gap: 0.4rem; padding-block: 1.1rem 0.7rem; }
+    .bar nav { grid-column: 1 / -1; grid-row: 2; margin-left: 0; }
+    .theme { grid-column: 2; grid-row: 1; }
     nav ul { gap: 0 1.1rem; }
     nav a { font-size: 0.82rem; padding-block: 0.5rem; }
     nav a:not(.out):not([aria-current])::before, nav a:not(.out):not([aria-current])::after { content: none; }

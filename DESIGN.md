@@ -7,8 +7,9 @@ noticed on a second look, not the first.
 
 ## Colour
 
-Dark by default. A matching light palette is used automatically when the reader's device
-is set to light mode (`prefers-color-scheme`). All tokens live at the top of
+Dark by default for every first-time visitor. Readers can switch to the light companion
+theme with the mono `dark / light` control in the header; the choice is stored in
+`localStorage` and applied before first paint. All tokens live at the top of
 `src/styles/global.css`.
 
 | Token | Dark | Light | Use | Contrast (dark / light) |
