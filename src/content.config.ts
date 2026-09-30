@@ -82,6 +82,9 @@ const research = defineCollection({
     abstract: z.string().optional(),
     abstractSource: z.string().optional(),
     citation: z.object({ apa: z.string(), bibtex: z.string().optional() }),
+    /** Optional one-line summaries shown in the research metadata block. */
+    sample: z.string().optional(),
+    method: z.string().optional(),
     keywords: z.array(z.string()).default([]),
     featured: z.boolean().default(false),
     draft: z.boolean().default(false),

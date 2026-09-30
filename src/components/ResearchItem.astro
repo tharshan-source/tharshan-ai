@@ -1,21 +1,37 @@
 ---
 import type { Research } from '../lib/content';
 import { slugOf } from '../lib/content';
-interface Props { entry: Research }
-const { entry } = Astro.props;
-const { title, description, venue, year, authors, type } = entry.data;
+interface Props { entry: Research; spec?: boolean }
+const { entry, spec = false } = Astro.props;
+const { title, description, venue, year, authors, type, volume, doi } = entry.data;
+const surnames = authors.map((a) => a.split(' ').slice(-1)[0]).join(', ');
+const href = `/research/${slugOf(entry)}`;
 ---
-<li class="entry">
-  <a href={`/research/${slugOf(entry)}`}>
-    <div class="entry-side"><span class="tag">{type}</span></div>
+<li class:list={['entry', 'res', { 'res--spec': spec }]}>
+  <div class="entry-inner">
+    <p class="meta stack"><span class="a">{type.toLowerCase().includes('journal') ? 'peer-reviewed' : type.toLowerCase()}</span><span>{year}</span></p>
     <div>
-      <p class="venue"><em>{venue}</em>, {year}</p>
-      <h3 class="entry-title">{title}</h3>
+      <h3 class="entry-title"><a href={href}>{title}</a></h3>
       <p class="entry-desc">{description}</p>
-      <p class="meta"><span>{authors.join(' & ')}</span></p>
     </div>
-  </a>
+    {spec ? (
+      <dl class="spec spec--ruled">
+        <dt>journal</dt><dd>{venue}</dd>
+        <dt>year</dt><dd>{year}{volume && <> · vol. {volume}</>}</dd>
+        <dt>authors</dt><dd>{surnames}</dd>
+        {doi && <><dt>doi</dt><dd><a href={`https://doi.org/${doi}`} rel="noopener">{doi}</a></dd></>}
+      </dl>
+    ) : (
+      <p class="meta entry-end"><span>{venue}</span></p>
+    )}
+  </div>
 </li>
 <style>
-  .venue { font-size: 1rem; color: var(--text-muted); margin-bottom: 0.25rem; }
+  .entry-title a { text-decoration: none; }
+  .entry-inner:hover .entry-title { color: var(--accent-2); }
+  @media (min-width: 60rem) {
+    .res--spec .entry-inner { grid-template-columns: var(--side) minmax(0, 1fr) 24rem; align-items: start; }
+    .res:not(.res--spec) .entry-inner { grid-template-columns: var(--side) minmax(0, 1fr) 12rem; }
+  }
+  .res--spec .entry-title { font-size: var(--step-2); }
 </style>

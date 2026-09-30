@@ -7,37 +7,38 @@ import { SITE } from '../../site.config';
 
 const all = await getWriting();
 const used = WRITING_CATEGORIES.filter((c) => all.some((e) => e.data.category === c));
-// Group by year for long lists
 const years = [...new Set(all.map((e) => e.data.date.getUTCFullYear()))];
 ---
 <Base title="Writing" description="Essays, research notes, analysis and experiments on how AI is built, financed and governed.">
   <header class="wrap page-head">
+    <p class="mono kicker"><span class="a">01</span> / writing{all.length > 0 && <> — {all.length} {all.length === 1 ? 'entry' : 'entries'}</>}</p>
     <h1>Writing</h1>
     <p class="lede">Essays, research notes, analysis and experiments on how AI is built, financed and governed.</p>
-    {used.length > 1 && (
-      <p class="kinds meta" aria-label="Types of writing">{used.map((c) => <span class="tag">{c}</span>)}</p>
-    )}
+    {used.length > 1 && <p class="meta kinds">{used.map((c) => <span>{c.toLowerCase()}</span>)}</p>}
   </header>
   <div class="wrap">
     {all.length ? (
       years.map((y) => (
         <section class="year" aria-label={String(y)}>
-          <h2 class="label">{y}</h2>
+          <h2 class="mono yr">{y}</h2>
           <ul class="entries">{all.filter((e) => e.data.date.getUTCFullYear() === y).map((entry) => <WritingItem entry={entry} />)}</ul>
         </section>
       ))
     ) : (
-      <div class="empty">
-        <p>Nothing published yet. The first essays and research notes are in progress.</p>
-        <p>In the meantime, the <a href="/research">published research</a> and <a href="/videos">videos</a> are a good place to start.</p>
-        <p class="meta">New pieces will appear here and on the <a href="/rss.xml">RSS feed</a>.</p>
+      <div class="empty with-side">
+        <p class="mono a">empty_</p>
+        <div>
+          <p>Nothing published yet. The first essays and research notes are in progress.</p>
+          <p>In the meantime, the <a href="/research">published research</a> and <a href="/videos">videos</a> are a good place to start.</p>
+          <p class="mono">new pieces will appear here and on the <a href="/rss.xml">rss feed</a></p>
+        </div>
       </div>
     )}
   </div>
 </Base>
 <style>
   .kinds { margin-top: 1.5rem; }
-  .kinds > * + *::before { content: '/'; }
-  .year + .year { margin-top: 3rem; }
-  .year .label { margin-bottom: 0.8rem; }
+  .year + .year { margin-top: 3.5rem; }
+  .yr { font-size: 0.78rem; color: var(--accent); margin-bottom: 0.9rem; letter-spacing: 0; }
+  .empty a { color: var(--text); text-decoration-color: var(--accent); }
 </style>

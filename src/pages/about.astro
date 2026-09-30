@@ -18,12 +18,15 @@ const jsonLd = {
 ---
 <Base title="About" description="Tharshan Thavaharan builds in AI at Cloud Capital, founded AI Launchpad, and has published doctoral research in Finance Research Letters." type="profile" jsonLd={jsonLd}>
   <header class="wrap page-head">
+    <p class="mono kicker"><span class="a">04</span> / about</p>
     <h1>About</h1>
     <p class="lede">I work on how AI is built, financed and governed, and on the people and institutions that decide how it turns out.</p>
   </header>
 
-  <div class="wrap">
-    <div class="prose">
+  <div class="wrap with-side about-body">
+    <p class="meta stack"><span>tharshan thavaharan</span></p>
+    <div>
+    <div class="prose numbered">
       <h2>What I do</h2>
       <p>
         I’m at <strong>Cloud Capital</strong>, where I work with CFOs, CTOs and investors to underwrite AI and cloud infrastructure spend.
@@ -68,12 +71,14 @@ const jsonLd = {
 
     <div class="contact">
       <p>The best way to reach me is on LinkedIn.</p>
-      <a class="cta" href={SITE.linkedin} rel="me noopener" target="_blank">Connect on LinkedIn <span aria-hidden="true">↗</span></a>
+      <a class="btn btn--signal" href={SITE.linkedin} rel="me noopener" target="_blank">connect on linkedin <span aria-hidden="true">↗</span></a>
+    </div>
     </div>
   </div>
 </Base>
 <style>
+  .about-body { margin-top: 1rem; }
   .prose h2:first-child { margin-top: 0.5rem; }
-  .contact { max-width: var(--measure); margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--ink); }
-  .contact p { margin-bottom: 1.1rem; color: var(--text-muted); }
+  .contact { max-width: var(--measure); margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
+  .contact p { margin-bottom: 1.1rem; color: var(--muted); }
 </style>

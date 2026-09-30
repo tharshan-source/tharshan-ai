@@ -1,0 +1,26 @@
+---
+/** The latest (or featured) piece, set large at the top of the homepage. */
+import type { Writing } from '../lib/content';
+import { slugOf, readingTime, dotDate, isoDate } from '../lib/content';
+interface Props { entry: Writing }
+const { entry } = Astro.props;
+const { title, description, date, category } = entry.data;
+const minutes = readingTime(entry.body);
+const href = `/writing/${slugOf(entry)}`;
+---
+<article class="feat with-side">
+  <p class="meta stack"><span class="a">{category.toLowerCase()}</span><time datetime={isoDate(date)}>{dotDate(date)}</time>{minutes && <span>{minutes} min</span>}</p>
+  <div>
+    <h3><a href={href}>{title}</a></h3>
+    <p class="deck">{description}</p>
+    <a class="cursor-link" href={href} aria-label={`Read: ${title}`}>read →</a>
+  </div>
+</article>
+<style>
+  .feat { margin-bottom: 3rem; }
+  .feat .meta { padding-top: 0.7rem; }
+  h3 { font-size: var(--step-4); line-height: 1.04; letter-spacing: -0.028em; max-width: 18ch; }
+  h3 a { text-decoration: none; }
+  h3 a:hover { color: var(--accent-2); }
+  .deck { font-size: var(--step-1); line-height: 1.5; color: var(--muted); max-width: 36rem; margin: 1.25rem 0 1.5rem; }
+</style>

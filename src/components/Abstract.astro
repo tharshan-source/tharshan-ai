@@ -3,8 +3,8 @@
  * Renders the official abstract from a research entry's frontmatter.
  * Used inside research .mdx files as <Abstract /> (the paper page passes it in).
  */
-import { getResearch, slugOf } from '../lib/content';
-const slug = Astro.url.pathname.split('/').filter(Boolean).pop() ?? '';
+import { getResearch, slugOf, cleanPath } from '../lib/content';
+const slug = cleanPath(Astro.url.pathname).split('/').pop() ?? '';
 const entry = (await getResearch()).find((e) => slugOf(e) === slug);
 const d = entry?.data;
 ---
@@ -13,11 +13,11 @@ const d = entry?.data;
     <h2 id="h-abstract">Abstract</h2>
     <blockquote class="abstract-text"><p>{d.abstract}</p></blockquote>
     {d.abstractSource && <p class="meta src">{d.abstractSource}</p>}
-    {d.keywords.length > 0 && <p class="meta"><span>Keywords: {d.keywords.join(', ')}</span></p>}
+    {d.keywords.length > 0 && <p class="meta"><span>keywords: {d.keywords.join(", ").toLowerCase()}</span></p>}
   </section>
 )}
 <style>
-  .abstract-text { font-style: normal !important; color: var(--text) !important; border-left-color: var(--ink) !important; }
+  .abstract-text { font-style: normal !important; color: var(--text) !important; border-left-color: var(--rule-2) !important; font-size: 1.05em !important; }
   .src { margin-top: 1rem; }
   .abstract > * + * { margin-top: 1.1em; }
 </style>

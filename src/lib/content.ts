@@ -41,8 +41,19 @@ export function readingTime(body: string | undefined) {
 export const formatDate = (d: Date, style: 'long' | 'short' = 'long') =>
   d.toLocaleDateString('en-GB', style === 'long' ? { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' } : { month: 'short', year: 'numeric', timeZone: 'UTC' });
 
+/** 2026.09.30: the site's mono date format */
+export const dotDate = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '.');
+
 export const isoDate = (d: Date) => d.toISOString().slice(0, 10);
 
 export type Writing = CollectionEntry<'writing'>;
 export type Research = CollectionEntry<'research'>;
 export type Video = CollectionEntry<'videos'>;
+
+/**
+ * The build writes pages as files (about.html, writing.html), so at build time
+ * Astro.url.pathname can end in ".html" or "/index.html". This returns the
+ * clean public path: "/", "/about", "/writing/my-post".
+ */
+export const cleanPath = (pathname: string) =>
+  pathname.replace(/\.html$/, '').replace(/\/index$/, '').replace(/\/$/, '') || '/';

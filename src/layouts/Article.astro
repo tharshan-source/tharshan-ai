@@ -5,10 +5,11 @@ import type { MarkdownHeading } from 'astro';
 import Base from './Base.astro';
 import WritingItem from '../components/WritingItem.astro';
 import { SITE } from '../site.config';
-import { type Writing, getWriting, slugOf, readingTime, formatDate, isoDate } from '../lib/content';
+import { type Writing, getWriting, slugOf, readingTime, formatDate, dotDate, isoDate } from '../lib/content';
 
 interface Props { entry: Writing; headings: MarkdownHeading[] }
-const { entry } = Astro.props;
+const { entry, headings } = Astro.props;
+const toc = headings.filter((h) => h.depth === 2 && h.slug !== 'footnote-label');
 const { title, description, date, updated, category, tags, hero, references, originallyPublished, draft } = entry.data;
 const slug = slugOf(entry);
 const minutes = readingTime(entry.body);
@@ -43,79 +44,134 @@ const jsonLd = {
   noindex={draft}
 >
   <article class="wrap article">
-    <header class="head">
-      <p class="kicker"><a class="tag tag--accent" href="/writing">{category}</a>{draft && <span class="tag"> · Draft, not published</span>}</p>
-      <h1>{title}</h1>
-      <p class="dek">{description}</p>
-      <p class="meta byline">
-        <span>By {SITE.name}</span>
-        <time datetime={isoDate(date)}>{formatDate(date)}</time>
-        {minutes && <span>{minutes} min read</span>}
-        {updated && <span>Updated <time datetime={isoDate(updated)}>{formatDate(updated)}</time></span>}
-      </p>
+    <header class="head with-side">
+      <p class="meta stack crumb"><a class="a" href="/writing">writing</a><span>{category.toLowerCase()}</span>{draft && <span class="a">draft — not published</span>}</p>
+      <div>
+        <h1>{title}</h1>
+        <p class="dek">{description}</p>
+        <p class="meta byline">
+          <span>by {SITE.name.toLowerCase()}</span>
+          <span>published <time datetime={isoDate(date)}>{dotDate(date)}</time></span>
+          {minutes && <span>{minutes} min read</span>}
+          {updated && <span>updated <time datetime={isoDate(updated)}>{dotDate(updated)}</time></span>}
+        </p>
+      </div>
     </header>
 
     {hero && (
       <figure class="hero">
-        <Image src={hero.src} alt={hero.alt} widths={[640, 1024, 1600]} sizes="(min-width: 68rem) 64rem, 100vw" loading="eager" fetchpriority="high" />
-        {hero.caption && <figcaption>{hero.caption}</figcaption>}
+        <Image src={hero.src} alt={hero.alt} widths={[640, 1024, 1600]} sizes="(min-width: 74rem) 64rem, 100vw" loading="eager" fetchpriority="high" />
+        {hero.caption && <figcaption class="mono">{hero.caption}</figcaption>}
       </figure>
     )}
 
-    <div class="prose body">
-      <slot />
-    </div>
-
-    {(references.length > 0 || originallyPublished) && (
-      <section class="prose refs" aria-labelledby="h-refs">
-        {references.length > 0 && (
+    <div class="with-side body">
+      <nav class="toc" aria-label="Contents">
+        {toc.length > 1 && (
           <>
-            <h2 id="h-refs">References</h2>
-            <ol>
-              {references.map((r) => (
-                <li><a href={r.url} rel="noopener">{r.title}</a>{r.note && <span class="note">, {r.note}</span>}</li>
-              ))}
-            </ol>
+            <p class="mono">contents</p>
+            <ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text.toLowerCase()}</a></li>)}</ol>
           </>
         )}
-        {originallyPublished && (
-          <p class="meta">
-            Originally published {originallyPublished.url ? <a href={originallyPublished.url} rel="noopener">on {originallyPublished.where}</a> : <>on {originallyPublished.where}</>}
-            {originallyPublished.date && <> in {formatDate(originallyPublished.date, 'short')}</>}.
-          </p>
-        )}
-      </section>
-    )}
+      </nav>
+      <div>
+        <div class="prose numbered" data-sidenotes>
+          <slot />
+        </div>
 
-    <footer class="end">
-      <p>Written by <a href="/about">{SITE.name}</a>. If this was useful, I’d be glad to hear what you think <a class="ext" href={SITE.linkedin} rel="noopener" target="_blank">on LinkedIn</a>.</p>
-      {tags.length > 0 && <p class="meta tags">{tags.map((t) => <span>{t}</span>)}</p>}
-    </footer>
+        {(references.length > 0 || originallyPublished) && (
+          <section class="prose refs" aria-labelledby="h-refs">
+            {references.length > 0 && (
+              <>
+                <h2 id="h-refs">references</h2>
+                <ol>
+                  {references.map((r) => (
+                    <li><a href={r.url} rel="noopener">{r.title}</a>{r.note && <span class="note">, {r.note}</span>}</li>
+                  ))}
+                </ol>
+              </>
+            )}
+            {originallyPublished && (
+              <p class="meta">
+                <span>originally published {originallyPublished.url ? <a href={originallyPublished.url} rel="noopener">on {originallyPublished.where}</a> : <>on {originallyPublished.where}</>}{originallyPublished.date && <> in {formatDate(originallyPublished.date, 'short')}</>}</span>
+              </p>
+            )}
+          </section>
+        )}
+
+        <footer class="end">
+          <p class="mono endmark"><span class="a">■</span> end</p>
+          <p>Written by <a href="/about">{SITE.name}</a>. If this was useful, I’d be glad to hear what you think <a href={SITE.linkedin} rel="noopener" target="_blank">on LinkedIn ↗</a>.</p>
+          {tags.length > 0 && <p class="meta tags">{tags.map((t) => <span>{t.toLowerCase()}</span>)}</p>}
+        </footer>
+      </div>
+    </div>
   </article>
 
   {others.length > 0 && (
     <section class="wrap section more" aria-labelledby="h-more">
-      <div class="section-head"><h2 id="h-more">More writing</h2><a href="/writing">All writing <span aria-hidden="true">→</span></a></div>
+      <div class="marker"><h2 id="h-more">more writing</h2><span class="line" aria-hidden="true"></span><a href="/writing">all →</a></div>
       <ul class="entries">{others.map((e) => <WritingItem entry={e} />)}</ul>
     </section>
   )}
 </Base>
 
+<script>
+  // Sidenotes: on wide screens, copy each footnote into the margin beside the
+  // paragraph that references it. The list at the end stays for small screens,
+  // print and readers without JavaScript.
+  const prose = document.querySelector<HTMLElement>('[data-sidenotes]');
+  const refs = prose ? [...prose.querySelectorAll<HTMLAnchorElement>('a[data-footnote-ref]')] : [];
+  if (prose && refs.length) {
+    refs.forEach((ref, i) => {
+      const id = ref.getAttribute('href')?.slice(1);
+      const note = id ? document.getElementById(id) : null;
+      const block = ref.closest('p, li, blockquote, td');
+      if (!note || !block) return;
+      const side = document.createElement('span');
+      side.className = 'sidenote';
+      side.setAttribute('aria-hidden', 'true');
+      const body = note.cloneNode(true) as HTMLElement;
+      body.querySelectorAll('[data-footnote-backref]').forEach((b) => b.remove());
+      side.innerHTML = `<b>[${i + 1}]</b>${body.textContent?.trim() ?? ''}`;
+      const placed = block.querySelectorAll(':scope > .sidenote');
+      const after = placed.length ? placed[placed.length - 1].nextSibling : block.firstChild;
+      block.insertBefore(side, after);
+    });
+    prose.classList.add('has-sidenotes');
+  }
+</script>
+
 <style>
-  .article { padding-top: clamp(2.5rem, 7vw, 5rem); }
-  .head { max-width: 48rem; }
-  .kicker a { text-decoration: none; }
-  h1 { font-size: var(--step-3); font-weight: 400; letter-spacing: -0.022em; line-height: 1.08; margin-top: 1rem; }
-  .dek { margin-top: 1.1rem; font-size: var(--step-1); line-height: 1.42; color: var(--text-muted); max-width: 40rem; }
-  .byline { margin-top: 1.6rem; padding-top: 1rem; border-top: 1px solid var(--rule); max-width: var(--measure); }
-  .hero { margin: clamp(2rem, 5vw, 3rem) 0 0; max-width: 64rem; }
-  .hero :global(img) { width: 100%; border-radius: 2px; }
-  .hero figcaption { margin-top: 0.6rem; font: 0.85rem/1.45 var(--sans); color: var(--text-faint); max-width: var(--measure); }
-  .body { margin-top: clamp(2rem, 5vw, 3rem); }
-  .body > :global(p:first-child) { font-size: 1.08em; }
-  .refs { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); font-size: 0.98rem; }
-  .refs h2 { font: 600 0.74rem/1.2 var(--sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-faint); margin: 0; }
-  .refs .note { color: var(--text-muted); }
-  .end { max-width: var(--measure); margin-top: 3rem; padding-top: 1.25rem; border-top: 1px solid var(--ink); font-size: 1.02rem; color: var(--text-muted); }
-  .end .tags { margin-top: 0.8rem; }
+  .article { padding-top: clamp(3rem, 8vw, 6rem); }
+  .crumb { padding-top: 0.9rem; }
+  .crumb a { text-decoration: none; }
+  h1 { font-size: var(--step-3); letter-spacing: -0.025em; line-height: 1.06; max-width: 20ch; }
+  .dek { margin-top: 1.4rem; font-size: var(--step-1); line-height: 1.5; color: var(--muted); max-width: 36rem; }
+  .byline { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--rule); max-width: var(--measure); }
+  .hero { margin: clamp(2.5rem, 5vw, 3.5rem) 0 0; max-width: 64rem; }
+  .hero :global(img) { width: 100%; border: 1px solid var(--rule); }
+  .hero figcaption { margin-top: 0.6rem; font-size: 0.76rem; color: var(--faint); max-width: var(--measure); }
+  .body { margin-top: clamp(2.5rem, 6vw, 3.75rem); }
+  .toc { display: none; }
+  @media (min-width: 60rem) {
+    .toc { display: block; position: sticky; top: 2rem; align-self: start; font: 400 0.74rem/1.6 var(--mono); color: var(--faint); }
+    .toc p { margin-bottom: 0.7rem; }
+    .toc p::before { content: '// '; }
+    .toc ol { list-style: none; margin: 0; padding: 0; }
+    .toc li + li { margin-top: 0.45rem; }
+    .toc a { text-decoration: none; color: var(--muted); display: block; position: relative; }
+    .toc a:hover { color: var(--accent-2); }
+    .toc a:hover::before { content: '>'; position: absolute; left: -1.1em; color: var(--accent); }
+  }
+  .body > div { max-width: var(--measure); }
+  @media (min-width: 84rem) { .body > div { max-width: none; } .body .prose { margin-right: 17rem; } }
+  .refs { margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); font-size: 0.95rem; }
+  .refs h2 { font: 400 0.76rem/1 var(--mono); color: var(--faint); margin: 0; letter-spacing: 0; }
+  .refs h2::before { content: '// '; }
+  .refs .note { color: var(--muted); }
+  .end { max-width: var(--measure); margin-top: 3.5rem; font-size: 1rem; color: var(--muted); }
+  .end a { color: var(--text); text-decoration-color: var(--accent); }
+  .endmark { font-size: 0.8rem; color: var(--faint); margin-bottom: 1rem; }
+  .end .tags { margin-top: 0.9rem; }
 </style>

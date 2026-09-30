@@ -1,9 +1,10 @@
 ---
-/** Small uppercase label with a rule above, plus an optional "see all" link. */
-interface Props { title: string; href?: string; linkLabel?: string; id?: string }
-const { title, href, linkLabel = 'All', id } = Astro.props;
+/** Section marker: "01 / writing ─────── all →" */
+interface Props { title: string; n?: string; href?: string; linkLabel?: string; id?: string }
+const { title, n, href, linkLabel = 'all', id } = Astro.props;
 ---
-<div class="section-head">
-  <h2 id={id}>{title}</h2>
-  {href && <a href={href}>{linkLabel} <span aria-hidden="true">→</span></a>}
+<div class="marker">
+  <h2 id={id}>{n && <><span class="n">{n}</span> / </>}{title.toLowerCase()}</h2>
+  <span class="line" aria-hidden="true"></span>
+  {href && <a href={href}>{linkLabel} →</a>}
 </div>

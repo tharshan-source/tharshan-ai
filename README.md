@@ -2,7 +2,7 @@
 
 Source for [tharshan.ai](https://tharshan.ai): research, writing and videos by Tharshan.
 
-Built with [Astro](https://astro.build) (static site, TypeScript, Markdown/MDX) and hosted on Cloudflare Workers. There is no CMS: **this repository is the CMS.** Add or edit a Markdown file, push to `main`, and the site rebuilds and deploys itself.
+Built with [Astro](https://astro.build) (static site, TypeScript, Markdown/MDX) and hosted on Cloudflare Pages. There is no CMS: **this repository is the CMS.** Add or edit a Markdown file, push to `main`, and the site rebuilds and deploys itself.
 
 ---
 
@@ -22,7 +22,7 @@ Other commands:
 | Command | What it does |
 | --- | --- |
 | `npm run build` | Builds the production site into `dist/` |
-| `npm run preview` | Builds, then serves it exactly as Cloudflare will |
+| `npm run preview` | Builds, then serves it locally the way Cloudflare Pages will |
 | `npm run check` | Checks types and content frontmatter for errors |
 
 ## 2. Add a new article
@@ -74,11 +74,12 @@ Without a thumbnail, the site draws a clean typographic tile.
 
 ## 5. How deployment works
 
-- The site is a Cloudflare **Worker with static assets** (`wrangler.jsonc`), connected to this GitHub repository through **Cloudflare Workers Builds**.
-- Every push to `main` → Cloudflare runs `npm run build` and deploys `dist/` to **https://tharshan.ai**. Takes about a minute.
-- Pushes to any other branch create a **preview deployment** with its own URL (shown on the commit in GitHub and in the Cloudflare dashboard), without touching the live site.
-- `www.tharshan.ai` permanently redirects to `https://tharshan.ai` (a Cloudflare Redirect Rule).
+- The site is hosted on **Cloudflare Pages** (project `tharshan-ai`), connected to this GitHub repository.
+- Every push to `main` → Cloudflare runs `npm run build` (Node 22) and publishes `dist/` to **https://tharshan.ai**. Usually under a minute.
+- Pushes to any other branch get a **preview deployment** at `<branch>.tharshan-ai.pages.dev`, without touching the live site.
+- `www.tharshan.ai` permanently redirects (301) to `https://tharshan.ai` via a Cloudflare Redirect Rule; all `http://` requests are upgraded to HTTPS.
 - Cloudflare Web Analytics (cookie-free, no banner needed) is enabled in the Cloudflare dashboard, not in this code.
+- Caching and security headers are set in `public/_headers`.
 
 If a build fails (usually a typo in frontmatter), the live site stays on the previous version. The error is shown in Cloudflare → Workers & Pages → tharshan-ai → Deployments. Run `npm run check` locally to see the same error.
 

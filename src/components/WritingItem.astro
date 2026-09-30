@@ -1,6 +1,6 @@
 ---
 import type { Writing } from '../lib/content';
-import { slugOf, readingTime, formatDate, isoDate } from '../lib/content';
+import { slugOf, readingTime, dotDate, isoDate } from '../lib/content';
 interface Props { entry: Writing }
 const { entry } = Astro.props;
 const { title, description, date, category, draft } = entry.data;
@@ -8,15 +8,12 @@ const minutes = readingTime(entry.body);
 ---
 <li class="entry">
   <a href={`/writing/${slugOf(entry)}`}>
-    <div class="entry-side"><span class="tag tag--accent">{category}</span></div>
+    <p class="meta"><time datetime={isoDate(date)}>{dotDate(date)}</time><span class="a">{category.toLowerCase()}</span></p>
     <div>
-      <h3 class="entry-title">{title}{draft && <span class="draft"> (draft)</span>}</h3>
+      <h3 class="entry-title">{title}{draft && <span class="draft mono"> draft</span>}</h3>
       <p class="entry-desc">{description}</p>
-      <p class="meta">
-        <time datetime={isoDate(date)}>{formatDate(date)}</time>
-        {minutes && <span>{minutes} min read</span>}
-      </p>
     </div>
+    <p class="meta entry-end">{minutes && <span>{minutes} min</span>}</p>
   </a>
 </li>
-<style>.draft { color: var(--accent); font-size: 0.8em; }</style>
+<style>.draft { color: var(--accent); font-size: 0.7rem; vertical-align: middle; }</style>

@@ -6,12 +6,13 @@ const all = await getResearch();
 ---
 <Base title="Research" description="Published and peer-reviewed research by Tharshan Thavaharan on corporate governance and carbon outcomes.">
   <header class="wrap page-head">
+    <p class="mono kicker"><span class="a">02</span> / research — {all.length} {all.length === 1 ? 'paper' : 'papers'}</p>
     <h1>Research</h1>
     <p class="lede">Published and substantive research. My doctoral work at Paris School of Business looks at how corporate governance shapes carbon outcomes.</p>
   </header>
   <div class="wrap">
-    <ul class="entries">{all.map((entry) => <ResearchItem entry={entry} />)}</ul>
-    <p class="meta note">Shorter research notes and working analysis are published under <a href="/writing">Writing</a>.</p>
+    <ul class="entries">{all.map((entry) => <ResearchItem entry={entry} spec />)}</ul>
+    <p class="mono note">// shorter research notes and working analysis are published under <a href="/writing">writing</a></p>
   </div>
 </Base>
-<style>.note { margin-top: 2rem; }</style>
+<style>.note { margin-top: 2rem; } .note a { color: var(--accent); }</style>

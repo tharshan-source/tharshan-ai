@@ -1,67 +1,40 @@
 ---
 /**
- * A video entry. If a thumbnail is set in the frontmatter it is shown;
- * otherwise a typographic tile is drawn (no stock imagery).
+ * A video entry, presented like any other piece of work: text first.
+ * A thumbnail is shown only if one is set in the frontmatter.
  */
 import { Image } from 'astro:assets';
 import type { Video } from '../lib/content';
-import { formatDate, isoDate } from '../lib/content';
+import { dotDate, isoDate } from '../lib/content';
 interface Props { entry: Video; compact?: boolean }
 const { entry, compact = false } = Astro.props;
 const { title, description, date, platform, url, thumbnail, thumbnailAlt, duration } = entry.data;
 ---
 <li class:list={['video', { compact }]}>
-  <a href={url} target="_blank" rel="noopener" class="video-link">
-    <div class="thumb" aria-hidden={thumbnail ? undefined : 'true'}>
-      {thumbnail ? (
-        <Image src={thumbnail} alt={thumbnailAlt ?? ''} widths={[360, 720]} sizes="(min-width: 46rem) 20rem, 100vw" />
-      ) : (
-        <div class="tile">
-          <span class="tile-platform">{platform}</span>
-          {compact ? <span class="tile-title">{title}</span> : <span />}
-          <span class="tile-play"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>{duration}</span>
-        </div>
-      )}
-    </div>
-    <div class="body">
-      <p class="meta">
-        <span>{platform}</span>
-        <time datetime={isoDate(date)}>{formatDate(date)}</time>
-        {duration && <span>{duration}</span>}
-      </p>
-      <h3 class:list={['entry-title', 'ext', { 'visually-hidden': compact }]}>{title}<span class="visually-hidden"> (watch on {platform}, opens in a new tab)</span></h3>
-      <p class="entry-desc">{description}</p>
-    </div>
+  <a href={url} target="_blank" rel="noopener">
+    {thumbnail && <Image src={thumbnail} alt={thumbnailAlt ?? ''} widths={[360, 720]} sizes="(min-width: 60rem) 20rem, 100vw" class="thumb" />}
+    <p class="meta">
+      <span><span class="a" aria-hidden="true">▸ </span>{duration ?? 'video'}</span>
+      <span>{platform.toLowerCase()}</span>
+      <time datetime={isoDate(date)}>{dotDate(date)}</time>
+    </p>
+    <h3 class="t">{title}<span class="visually-hidden"> (watch on {platform}, opens in a new tab)</span></h3>
+    {!compact && <p class="d">{description}</p>}
   </a>
 </li>
 <style>
-  .video { border-bottom: 1px solid var(--rule); }
-  .video-link {
-    display: grid; gap: 1rem 2rem; padding-block: 1.5rem; text-decoration: none; color: inherit;
+  .video { border-top: 1px solid var(--rule); }
+  a { display: block; padding-block: 1.25rem 1.5rem; text-decoration: none; color: inherit; }
+  .t { font-size: 1.2rem; line-height: 1.3; margin-top: 0.55rem; letter-spacing: -0.01em; transition: color 120ms ease; }
+  a:hover .t { color: var(--accent-2); }
+  .d { color: var(--muted); font-size: 1rem; line-height: 1.5; margin-top: 0.4rem; max-width: 38rem; }
+  .thumb { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border: 1px solid var(--rule); margin-bottom: 1rem; }
+  .video:not(.compact) { border-top: 0; border-bottom: 1px solid var(--rule); }
+  @media (min-width: 60rem) {
+    .video:not(.compact) a { display: grid; grid-template-columns: var(--side) minmax(0, 1fr); column-gap: 3rem; }
+    .video:not(.compact) .meta { grid-row: 1 / span 2; flex-direction: column; gap: 0.3rem; }
+    .video:not(.compact) .meta > * + *::before { content: none; }
+    .video:not(.compact) .t { margin-top: 0; }
+    .video:not(.compact) .thumb { grid-column: 2; }
   }
-  @media (min-width: 46rem) {
-    .video-link { grid-template-columns: 14rem 1fr; align-items: start; }
-    .compact .video-link { grid-template-columns: 1fr; }
-  }
-  .thumb { aspect-ratio: 16 / 9; background: var(--ink); border-radius: 2px; overflow: hidden; }
-  .thumb :global(img) { width: 100%; height: 100%; object-fit: cover; }
-  .tile {
-    height: 100%; display: flex; flex-direction: column; justify-content: space-between;
-    padding: 0.9rem 1rem; color: var(--on-ink);
-    background: linear-gradient(var(--ink), var(--ink)) padding-box;
-    border: 1px solid var(--on-ink-rule);
-  }
-  .tile-platform { font: 600 0.66rem/1 var(--sans); letter-spacing: 0.1em; text-transform: uppercase; color: var(--on-ink-muted); }
-  .tile-title {
-    font-family: var(--serif); font-size: 1.15rem; line-height: 1.2;
-    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
-  }
-  .tile-play { display: inline-flex; align-items: center; gap: 0.4rem; font: 500 0.75rem/1 var(--sans); color: var(--on-ink-muted); font-feature-settings: 'tnum' 1; }
-  .video-link:hover .tile-play { color: var(--accent-on-ink); }
-  .video-link:hover .entry-title { color: var(--accent); }
-  .body .meta { margin-bottom: 0.4rem; }
-  .compact { border-bottom: 0; }
-  .compact .video-link { padding-block: 0; }
-  .compact .entry-desc { font-size: 0.98rem; margin-top: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-  .compact .video-link:hover .tile-title { color: var(--accent-on-ink); }
 </style>

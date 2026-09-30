@@ -5,27 +5,22 @@ const year = new Date().getFullYear();
 
 <footer class="site-footer">
   <div class="wrap inner">
-    <div>
-      <p class="name">Tharshan</p>
-      <p class="line">{SITE.footerLine}</p>
-    </div>
-    <ul class="links">
-      <li><a class="ext" href={SITE.linkedin} rel="me noopener" target="_blank">LinkedIn<span class="visually-hidden"> (opens in a new tab)</span></a></li>
-      <li><a href="/rss.xml">RSS</a></li>
-      <li><span>© {year} {SITE.fullName}</span></li>
+    <p>tharshan.ai — {SITE.footerLine.replace(/\.$/, '').toLowerCase()}</p>
+    <ul>
+      <li><a href="/rss.xml">rss</a></li>
+      <li><a href={SITE.linkedin} rel="me noopener" target="_blank">linkedin ↗<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+      <li><span>© {year} {SITE.fullName.toLowerCase()}</span></li>
     </ul>
   </div>
 </footer>
 
 <style>
-  .site-footer { border-top: 1px solid var(--rule); margin-top: clamp(2rem, 5vw, 3.5rem); }
+  .site-footer { margin-top: clamp(5rem, 10vw, 8rem); border-top: 1px solid var(--rule); }
   .inner {
-    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 1.25rem 2rem;
-    padding-block: 2rem 2.5rem; font-family: var(--sans); font-size: 0.86rem; color: var(--text-faint);
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 2rem;
+    padding-block: 2rem 3rem; font: 400 0.78rem/1.8 var(--mono); color: var(--faint);
   }
-  .name { font-family: var(--serif); font-size: 1.1rem; color: var(--text); margin-bottom: 0.25rem; }
-  .line { max-width: 30rem; }
-  .links { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem; }
-  .links a { color: var(--text-muted); text-decoration: none; }
-  .links a:hover { color: var(--accent); }
+  ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 1.25rem; }
+  a { color: var(--muted); text-decoration: none; }
+  a:hover { color: var(--accent-2); }
 </style>
