@@ -69,10 +69,18 @@ export async function getLatestVideo(slug: TopicSlug): Promise<Video | undefined
   return (await getVideos()).filter((e) => covers(e.data, slug))[0]; // getVideos() is already newest-first
 }
 
-/** LinkedIn's official embed URL, derived from a post URL containing urn:li:activity:… */
+/**
+ * Inline "▶ play" for LinkedIn is switched off: tested on 2026.10.01, LinkedIn's official
+ * embed renders as a white post card with the video below its own scroll area, which
+ * doesn't fit the site. LinkedIn videos therefore use the editorial preview + "watch on
+ * linkedin ↗". Set to true to re-enable. YouTube (via `embedUrl`) is unaffected.
+ */
+const LINKEDIN_INLINE_PLAY = false;
+
+/** The official embed URL for click-to-play, if one should be offered. */
 export function embedUrlFor(video: Video): string | undefined {
   if (video.data.embedUrl) return video.data.embedUrl;
-  if (video.data.platform === 'LinkedIn') {
+  if (LINKEDIN_INLINE_PLAY && video.data.platform === 'LinkedIn') {
     const m = video.data.url.match(/urn:li:(?:activity|ugcPost|share):\d+/);
     if (m) return `https://www.linkedin.com/embed/feed/update/${m[0]}`;
   }

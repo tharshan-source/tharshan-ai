@@ -83,11 +83,11 @@ Use `.mdx` instead of `.md` only if you want components such as `<Callout>`, `<Y
 **What happens automatically:**
 
 - The video appears on every topic page in `topic` and `related`, sorted newest first.
-- On each topic page, **the newest video by `date` is featured at the top.** It shows a preview, "watch on LinkedIn ↗", and a "▶ play" button that loads LinkedIn's official player only when clicked. Nothing from LinkedIn loads before then.
+- On each topic page, **the newest video by `date` is featured at the top**, as an editorial preview with "watch on linkedin ↗". Nothing from LinkedIn loads on the site. (Inline play for LinkedIn is switched off because LinkedIn's embed renders as a white post card. See `LINKEDIN_INLINE_PLAY` in `src/lib/topics.ts`.)
 - The featured video isn't repeated in the list below it.
 - If a topic has no videos, the feature is simply left out.
 - With no `thumbnail`, a typographic title tile is shown. To use a still, put an image next to the file and add `thumbnail: "./images/still.jpg"` and `thumbnailAlt`.
-- YouTube: add `embedUrl: "https://www.youtube-nocookie.com/embed/VIDEO_ID"` if you want "▶ play" to work.
+- YouTube: add `embedUrl: "https://www.youtube-nocookie.com/embed/VIDEO_ID"` and the featured video gets a "▶ play" button, which loads the player only when clicked.
 
 ## 5. Add research
 
