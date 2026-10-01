@@ -54,12 +54,15 @@ Every article and every video has one primary `topic:` and optional `related:` t
    | `related` | no | extra topics, e.g. `[ai-infrastructure]` |
    | `format` | yes | `essay`, `note`, `analysis`, `research note` or `experiment` |
    | `draft` | no | `true` keeps it off the live site |
+   | `video` | no | a companion video's file name, e.g. `the-wrap-framework`. Adds “also as a video ↗” at the end of the article |
    | `featured`, `updated`, `slug`, `hero`, `references`, `tags`, `originallyPublished` | no | see the example article |
 
 4. Write in Markdown below the frontmatter. Headings, quotes, lists, links, tables, footnotes (`[^1]`), images and code blocks all work.
 5. Set `draft: false`, commit. It appears on its topic page(s), the writing archive, RSS and the sitemap, with its own share image.
 
 Use `.mdx` instead of `.md` only if you want components such as `<Callout>`, `<YouTube>` or `<LinkedInEmbed>`.
+
+Images: put stills in `src/content/writing/images/` and use `![alt](./images/file.png)`; they're optimised automatically. Animated GIFs/WebPs go in `public/images/writing/` and are added with a plain `<img>` tag, so the animation survives (see `the-end-of-elastic.md`).
 
 ## 4. Add a video
 

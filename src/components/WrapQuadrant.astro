@@ -1,0 +1,94 @@
+---
+/**
+ * The WRAP quadrant from "Wrapping your head around aGeNtiC aI" (first published 2025.08.04),
+ * redrawn natively for the site. Wording is copied from the original diagram.
+ */
+const quadrants = [
+  {
+    key: 'interface', title: 'Interface Agents', axes: 'Process-heavy, External',
+    body: 'Better chatbots. When 40%+ of queries escalate to humans, hard to justify as truly autonomous. Success depends on UX and failure handling.',
+    stack: ['Voiceflow', 'Cognosys', 'GPT over RAG', 'OpenPipe', 'Vocode'],
+  },
+  {
+    key: 'autonomous', title: 'Autonomous Agents', axes: 'Process-less, External',
+    body: 'Mostly fictitious. What’s labeled “autonomous” is usually repackaged human-wrapped agents. Genuine autonomy demands pristine context and safety layers.',
+    stack: ['CrewAI', 'Microsoft AutoGen', 'OpenAgents', 'AutoGPT'],
+    note: '*Most in early concept stage',
+  },
+  {
+    key: 'workflow', title: 'Workflow Automation', axes: 'Process-heavy, Internal',
+    body: 'Zapier with LLM sprinkles. Useful? Yes. Revolutionary? No. Don’t pretend you’ve built a sentient intern when you’ve streamlined HR onboarding.',
+    stack: ['Zapier', 'Make', 'n8n', 'Retool', 'Tray.io'],
+  },
+  {
+    key: 'wrapped', title: 'Human-Wrapped Agents', axes: 'Process-less, Internal',
+    body: 'The apex of what’s working. AI handles synthesis, humans make calls. Real leverage without full autonomy liability. Quietly becoming the gold standard.',
+    stack: ['LangChain', 'LlamaIndex', 'Dust', 'ReAct Orchestration', 'Feedback APIs'],
+    note: 'Most of what’s working today lives here.',
+  },
+];
+---
+<figure class="wrapq" aria-labelledby="wrapq-cap">
+  <div class="frame">
+    <p class="ax ax-top mono" aria-hidden="true">external ↑</p>
+    <p class="ax ax-left mono" aria-hidden="true">← process-heavy</p>
+    <p class="ax ax-right mono" aria-hidden="true">process-less →</p>
+    <ul class="grid">
+      {quadrants.map((q) => (
+        <li class={`cell cell-${q.key}`}>
+          <p class="name"><span class="dot" aria-hidden="true"></span>{q.title}</p>
+          <p class="axes mono">{q.axes}</p>
+          <p class="body">{q.body}</p>
+          <p class="stack-label mono">tech stack examples:</p>
+          <p class="stack mono">{q.stack.map((s) => <span>{s}</span>)}</p>
+          {q.note && <p class="note">{q.note}</p>}
+        </li>
+      ))}
+    </ul>
+    <p class="ax ax-bottom mono" aria-hidden="true">internal ↓</p>
+  </div>
+  <figcaption id="wrapq-cap">
+    The WRAP quadrant. Note: any of these agent types can exist in internal or external contexts. This quadrant reflects where they most commonly show up today.
+  </figcaption>
+</figure>
+
+<style>
+  .wrapq { margin-block: 2.4em; --c-interface: #7fa7d9; --c-autonomous: #b394d6; --c-workflow: var(--accent); --c-wrapped: #d9a35f; }
+  :global(:root[data-theme='light']) .wrapq { --c-interface: #2f5f9e; --c-autonomous: #6c4a9a; --c-wrapped: #9a5d14; }
+  .frame { position: relative; }
+  .ax { margin: 0; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); }
+  .ax-top { margin-bottom: 0.6rem; }
+  .ax-bottom { margin-top: 0.6rem; }
+  .ax-left, .ax-right, .ax-top, .ax-bottom { display: none; }
+  .grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); border: 1px solid var(--rule-2); }
+  .cell { margin: 0; padding: 1.1rem 1.15rem 1.2rem; border-top: 1px solid var(--rule-2); min-width: 0; }
+  .cell:first-child { border-top: 0; }
+  .cell-wrapped { background: color-mix(in srgb, var(--c-wrapped) 7%, transparent); }
+  .name { margin: 0; font-size: 1.12rem; line-height: 1.3; color: var(--text); font-style: normal; }
+  .dot { display: inline-block; width: 0.55em; height: 0.55em; margin-right: 0.55em; vertical-align: 0.12em; }
+  .cell-interface .dot { background: var(--c-interface); }
+  .cell-autonomous .dot { background: var(--c-autonomous); }
+  .cell-workflow .dot { background: var(--c-workflow); }
+  .cell-wrapped .dot { background: var(--c-wrapped); }
+  .axes { margin: 0.3rem 0 0; font-size: 0.72rem; color: var(--faint); }
+  .body { margin: 0.75rem 0 0; font-size: 0.95rem; line-height: 1.55; color: var(--prose); }
+  .stack-label { margin: 0.9rem 0 0; font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); }
+  .stack { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.45rem 0 0; font-size: 0.7rem; }
+  .stack span { padding: 0.2rem 0.45rem; border: 1px solid var(--rule-2); color: var(--muted); }
+  .note { margin: 0.7rem 0 0; font-size: 0.82rem; font-style: italic; color: var(--faint); }
+  figcaption { margin-top: 0.9rem; }
+
+  @media (min-width: 40rem) {
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cell { border-top: 0; }
+    .cell:nth-child(n + 3) { border-top: 1px solid var(--rule-2); }
+    .cell:nth-child(odd) { border-right: 1px solid var(--rule-2); }
+    .ax-top, .ax-bottom { display: block; text-align: center; }
+  }
+  @media (min-width: 60rem) {
+    .frame { padding-inline: 1.6rem; }
+    .ax-left, .ax-right { display: block; position: absolute; top: 50%; white-space: nowrap; }
+    .ax-left { left: 0; transform: translate(-50%, -50%) rotate(-90deg); transform-origin: center; margin-left: 0.55rem; }
+    .ax-right { right: 0; transform: translate(50%, -50%) rotate(90deg); transform-origin: center; margin-right: 0.55rem; }
+  }
+</style>

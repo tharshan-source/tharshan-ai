@@ -1,0 +1,113 @@
+---
+title: "Wrapping your head around aGeNtiC aI"
+description: "Agentic AI has become a branding exercise, not a technical one. WRAP addresses this."
+date: 2025-08-04T11:30:00Z
+topic: human-wrapped-ai
+related: []
+format: essay
+video: the-wrap-framework
+---
+
+import WrapQuadrant from '../../components/WrapQuadrant.astro';
+
+Most of what’s paraded as ‘autonomous agents’ today is just glorified workflow automation with AI sprinkled on top.
+
+The gap between what has been marketed vs what is actually being built has widened enough that it is materially costing startups, scaleups and even enterprises time, money, trust - and increasingly, credibility.
+
+Summer 2025 has been spent running into the same questions across product demos, founder decks, and investor calls:
+
+- “Is this an agent or just automation?”
+- “When do we stop constraining agents to swim lanes, and actually let them act on their own observations?”
+- “How do we price the risk of failure when ‘AI’ is involved?”
+- “Was this even worth building with AI at all?”
+
+I started sketching a way to address those sorts of questions without having to level set and start from (my) first principles, every time. The result is what I now refer to as the WRAP framework, a simple diagnostic lens to cut through the agentic bs and help align what you’re building with what you’re saying.
+
+WRAP isn’t a hype killer, just a (somewhat needed) reality checker/expectations manager.
+
+## First: let’s define agents
+
+In the 90’s, “autonomous agents” were defined in AI research as systems that could “perform complex tasks independently.” Our frameworks still reflect how we think: in steps, sequences, processes. But real autonomy may emerge in forms we can’t yet model, especially as systems start reasoning beyond our ability to predict.
+
+Today’s “agentic AI” is this generation’s startup world’s attempt to chase that very same ideal using LLMs and modern tooling. But the reality is that there remains a stark difference between that dream that is being chased vs. what they’re proclaiming has already been built.
+
+Most of what’s out there today isn’t truly agentic. It’s AI-enhanced process automation. The system doesn’t figure things out on its own. It just runs the playbook you gave it.
+
+The market has got comfortable with confusing *where* AI sits in the system with *how* the system actually behaves. To make sense of what’s actually being built, there are two questions that matter:
+
+1. **How autonomous is it?**
+   - Is it *process-heavy* (you define the workflow, AI follows the steps)?
+   - Or *process-less* (you define the goal, AI figures out how to get there)?
+2. **Where does it operate?**
+   - *Internally*: safely tucked inside your team or tooling
+   - Or *externally*: exposed to customers, users, or the public?
+
+These two axes reveal whether you’re building real agentic systems, or just calling automation by a new name.
+
+It helps to visualise this as a quadrant: autonomy on one axis, exposure on the other. While each agent type could theoretically operate in internal or external settings, the WRAP visual reflects where these patterns most commonly show up in practice today.
+
+<WrapQuadrant />
+
+*The quadrant doesn’t represent a hierarchy or maturity model. The top-right isn’t “better.” It’s simply where you find the highest autonomy with the greatest exposure. In reality, most of what works today lives in the human-wrapped quadrant, not the so-called autonomous one.*
+
+## The WRAP quadrants: four realities of agentic ai
+
+This is not a maturity ladder. It is a map.
+
+It helps you locate what you have *actually* built - and whether your architecture matches your ambition/positioning
+
+1. **Workflow automation** *(process-heavy, internal)*
+
+> Zapier with sprinkles of LLM. Useful? Yep. Revolutionary? Nuh uh.
+>
+> Don’t pretend you’ve built a sentient intern when you’ve just streamlined HR onboarding.
+
+2. **Human-wrapped agents** *(process-less, internal)*
+
+> This is where it gets interesting. AI handles synthesis, parsing, or pattern recognition; but human subject-matter-expertise still makes the call. You get real leverage without the full liability of autonomy. Quietly becoming the apex of agentic AI that *actually* works. This isn’t human-in-the-loop for QA. It’s human-in-command. Human-wrapped agents give AI the heavy lifting, but keep final judgement in the hands of the domain expert.
+
+3. **Interface agents** *(process-heavy, external)*
+
+> Better chatbots, perhaps. When 40%+ of queries still escalate to humans, it’s hard to justify these as truly autonomous.
+>
+> Success here depends more on UX and failure handling than on “AI sophistication.”
+
+4. **Autonomous agents** *(process-less, external…in theory)*
+
+> Mostly fictitious within the current iteration/reality of AI. What gets labelled as “autonomous” is usually a well repackaged human-wrapped agent. Genuine autonomy at this level demands pristine context, hardened safety layers, and an environment designed for autonomous action. Tesla’s driving stack or Manus-style recursive agents hint at what’s possible, but replicating that in most software stacks today remains out of reach.
+
+## The test: would this be fine without AI?
+
+“Would this work better, faster, cheaper, or safer *without* AI?”
+
+If the answer is yes, you’re not building an agent. You’re adding AI to automation. Might still be useful, just don’t pretend it’s more than that.
+
+Using this lens across WRAP:
+
+- **Workflow automation:** often fails this test as traditional logic is faster and more reliable
+- **Human-wrapped agents:** usually pass. AI does the hard/heavier cognitive lift
+- **Interface agents:** mixed bag. AI shines when inputs are messy, human when rules are clear
+- **Autonomous agents:** AI is required here, but the bar is existentially high.
+
+## What WRAP is (and isn’t)
+
+WRAP isn’t a theory. It’s a filter.
+
+For founders, it sharpens focus: making sure what you’re building matches what you’re selling. For investors, it surfaces signal: revealing who’s architecting for reality vs. vibecoding for the pitch. For operators, it’s a sanity check: helping you prioritise what’s worth automating, where AI actually adds leverage, and when to keep humans involved.
+
+Everyone’s calling their automation an “agent” right now. That’s not the issue. The issue is when the architecture can’t support the autonomy being claimed. The teams that win won’t be the ones with the biggest claims. They’ll be the ones whose systems scale: because the tech and the story actually line up.
+
+## Closing thought: bun the hype
+
+Most “agentic AI” is just automation with better marketing.
+
+WRAP doesn’t care about the label. It asks:
+
+- Is this solving a real workflow?
+- Is the architecture simple and scalable?
+- Does it acc behave like an agent - or just claim/mimic to?
+
+Build where AI (actually) adds value. Ship what (actually) works.\
+Don’t overpromise autonomy because everyone else is.
+
+-T

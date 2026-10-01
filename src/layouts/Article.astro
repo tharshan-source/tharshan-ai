@@ -1,6 +1,7 @@
 ---
 /** Long-form article template for everything in src/content/writing. */
 import { Image } from 'astro:assets';
+import { getEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 import Base from './Base.astro';
 import WritingItem from '../components/WritingItem.astro';
@@ -11,7 +12,8 @@ import { type Writing, getWriting, slugOf, readingTime, formatDate, dotDate, iso
 interface Props { entry: Writing; headings: MarkdownHeading[] }
 const { entry, headings } = Astro.props;
 const toc = headings.filter((h) => h.depth === 2 && h.slug !== 'footnote-label');
-const { title, description, date, updated, format, topic, related, tags, hero, references, originallyPublished, draft } = entry.data;
+const { title, description, date, updated, format, topic, related, tags, hero, references, originallyPublished, draft, video: videoRef } = entry.data;
+const video = videoRef ? await getEntry(videoRef) : undefined;
 const slug = slugOf(entry);
 const minutes = readingTime(entry.body);
 const url = `${SITE.url}/writing/${slug}`;
@@ -111,6 +113,9 @@ const jsonLd = {
 
         <footer class="end">
           <p class="mono endmark"><span class="a">■</span> end</p>
+          {video && (
+            <p class="mono watch"><span class="a">▶</span> also as a video: <a href={video.data.url} rel="noopener" target="_blank">{video.data.title}<span class="go">, watch on {video.data.platform.toLowerCase()} ↗</span></a></p>
+          )}
           <p>Written by <a href="/about">{SITE.name}</a>. If this was useful, I’d be glad to hear what you think <a href={SITE.linkedin} rel="noopener" target="_blank">on LinkedIn ↗</a>.</p>
           {tags.length > 0 && <p class="meta tags">{tags.map((t) => <span>{t.toLowerCase()}</span>)}</p>}
         </footer>
@@ -184,4 +189,8 @@ const jsonLd = {
   .end a { color: var(--text); text-decoration-color: var(--accent); }
   .endmark { font-size: 0.8rem; color: var(--faint); margin-bottom: 1rem; }
   .end .tags { margin-top: 0.9rem; }
+  .watch { font-size: 0.8rem; line-height: 1.6; margin-bottom: 1.1rem; color: var(--muted); }
+  .watch a { text-decoration: none; }
+  .watch a:hover { color: var(--accent-2); }
+  .watch .go { color: var(--accent); }
 </style>

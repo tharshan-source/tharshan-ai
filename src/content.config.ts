@@ -12,7 +12,7 @@
  *
  * Files starting with an underscore are ignored (useful for templates).
  */
-import { defineCollection } from 'astro:content';
+import { defineCollection, reference as ref } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
@@ -61,6 +61,8 @@ const writing = defineCollection({
         })
         .optional(),
       references: z.array(reference).default([]),
+      /** Optional companion video: the file name (without .md) of an entry in src/content/videos. */
+      video: ref('videos').optional(),
       /** Set when a piece was first published elsewhere (e.g. LinkedIn, the old AI Experimenter). */
       originallyPublished: z
         .object({ where: z.string(), url: z.url().optional(), date: z.coerce.date().optional() })
