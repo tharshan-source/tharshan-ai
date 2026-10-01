@@ -31,7 +31,7 @@ export async function renderOg({ title, kicker, footer }: { title: string; kicke
       h('div', { fontFamily: 'Plex Serif', fontWeight: 400, fontSize: size, lineHeight: 1.1, letterSpacing: -1.5, maxWidth: 1000 }, title),
       h('div', { display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #2a2f32', paddingTop: 24, fontFamily: 'Plex Mono', fontSize: 22, color: '#a8a39a' }, [
         h('span', {}, (footer ?? 'tharshan').toLowerCase()),
-        h('span', {}, 'research · writing · notes'),
+        h('span', {}, 'economics · governance · infrastructure'),
       ]),
     ],
   );

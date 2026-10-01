@@ -1,14 +1,16 @@
 ---
 import type { Writing } from '../lib/content';
 import { slugOf, readingTime, dotDate, isoDate } from '../lib/content';
-interface Props { entry: Writing }
+import { topicTitle } from '../lib/topics';
+interface Props { entry: Writing; showTopic?: boolean }
 const { entry } = Astro.props;
-const { title, description, date, category, draft } = entry.data;
+const { title, description, date, format, topic, draft } = entry.data;
+const { showTopic = true } = Astro.props;
 const minutes = readingTime(entry.body);
 ---
 <li class="entry">
   <a href={`/writing/${slugOf(entry)}`}>
-    <p class="meta"><time datetime={isoDate(date)}>{dotDate(date)}</time><span class="a">{category.toLowerCase()}</span></p>
+    <p class="meta"><time datetime={isoDate(date)}>{dotDate(date)}</time><span class="a">{format}</span>{showTopic && <span>{topicTitle(topic).toLowerCase()}</span>}</p>
     <div>
       <h3 class="entry-title">{title}{draft && <span class="draft mono"> draft</span>}</h3>
       <p class="entry-desc">{description}</p>

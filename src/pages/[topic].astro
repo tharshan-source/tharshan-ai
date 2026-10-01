@@ -1,0 +1,114 @@
+---
+/**
+ * Topic pages: /ai-economics, /ai-infrastructure, /human-wrapped-ai
+ * Content appears here automatically via each file's `topic` / `related` fields.
+ */
+import Base from '../layouts/Base.astro';
+import SectionHead from '../components/SectionHead.astro';
+import VideoFeature from '../components/VideoFeature.astro';
+import FeedItem from '../components/FeedItem.astro';
+import { TOPIC_LIST, getTopicFeed, getLatestVideo, type Topic } from '../lib/topics';
+import { getResearch, slugOf } from '../lib/content';
+import { SITE } from '../site.config';
+
+export function getStaticPaths() {
+  return TOPIC_LIST.map((t) => ({ params: { topic: t.slug }, props: { t } }));
+}
+const { t } = Astro.props as { t: Topic };
+
+const latestVideo = await getLatestVideo(t.slug);
+const feed = (await getTopicFeed(t.slug)).filter((i) => !(latestVideo && i.kind === 'video' && i.entry.id === latestVideo.id));
+const isLens = t.slug === 'human-wrapped-ai';
+const frl = isLens ? (await getResearch()).find((r) => r.id === 'female-representation-boards-carbon-emissions') : undefined;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: t.title,
+    description: t.descriptor,
+    url: `${SITE.url}/${t.slug}`,
+    isPartOf: { '@type': 'WebSite', name: 'tharshan.ai', url: SITE.url },
+    author: { '@type': 'Person', name: SITE.fullName, url: SITE.url },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'tharshan.ai', item: SITE.url },
+      { '@type': 'ListItem', position: 2, name: t.title, item: `${SITE.url}/${t.slug}` },
+    ],
+  },
+];
+---
+<Base title={t.title} description={t.descriptor} jsonLd={jsonLd}>
+  <header class="wrap page-head topic-head">
+    <p class="mono kicker"><span class="a">{t.n}</span> / {t.title.toLowerCase()}</p>
+    <h1>{t.title.split(' ').map((w, i) => <>{i > 0 && ' '}<span class="nw">{w}</span></>)}</h1>
+    {isLens ? (
+      <div class="lens">
+        <p class="lede">AI outcomes don’t emerge from model capability alone. They’re shaped by the people, organisations, incentives, economics, infrastructure, governance and constraints wrapped around the technology.</p>
+        <p class="lens-q">So the question here is rarely just what a model can do. It’s what happens when that capability meets:</p>
+        <ul class="meets mono">
+          <li>this specific use case</li>
+          <li>these people</li>
+          <li>this organisation</li>
+          <li>these incentives</li>
+          <li>this economic model</li>
+          <li>this infrastructure</li>
+          <li>these governance constraints</li>
+        </ul>
+        <p class="lens-note">A working lens, not a framework. It gets sharper with each real use case.</p>
+      </div>
+    ) : (
+      <p class="lede">{t.descriptor}</p>
+    )}
+    {t.covers.length > 0 && <p class="meta covers">{t.covers.map((c) => <span>{c}</span>)}</p>}
+  </header>
+
+  <div class="wrap">
+    {latestVideo && <VideoFeature entry={latestVideo} current={t.slug} />}
+
+    {feed.length > 0 && (
+      <section class="section feed" aria-labelledby="h-feed">
+        <SectionHead id="h-feed" title={latestVideo ? 'More on this' : 'Everything on this'} />
+        <ul class="entries">{feed.map((item) => <FeedItem item={item} current={t.slug} />)}</ul>
+      </section>
+    )}
+
+    {frl && (
+      <section class="section bridge" aria-labelledby="h-bridge">
+        <SectionHead id="h-bridge" title="The governance research behind the question" />
+        <div class="with-side">
+          <p class="meta stack"><span class="a">research</span><span>lineage, not evidence</span></p>
+          <div class="bridge-body">
+            <p>The question behind this lens started in my doctoral research, which asks a narrower one: does who sits around a company’s board table change what the company does?</p>
+            <p>The published study, <a href={`/research/${slugOf(frl)}`}><em>{frl.data.title}</em></a> ({frl.data.venue}, {frl.data.year}), examines board gender diversity, corporate governance and carbon emissions. <strong>It does not study AI</strong>, and its findings say nothing about AI directly.</p>
+            <p>It belongs here as intellectual lineage: the habit of looking at the people and governance around a decision, not only the decision itself.</p>
+            <p class="mono"><a class="cursor-link" href={`/research/${slugOf(frl)}`}>read the research →</a></p>
+          </div>
+        </div>
+      </section>
+    )}
+  </div>
+</Base>
+
+<style>
+  .topic-head h1 { font-size: clamp(2.15rem, 0.6rem + 8vw, 5.6rem); letter-spacing: -0.035em; line-height: 1; }
+  .topic-head .lede { max-width: 34rem; }
+  .nw { white-space: nowrap; }
+  .covers { margin-top: 1.75rem; max-width: 44rem; }
+  .lens { max-width: 40rem; }
+  .lens .lede { max-width: none; color: var(--text); }
+  .lens-q { margin-top: 1.4rem; color: var(--muted); font-size: 1.05rem; }
+  .meets { list-style: none; margin: 1rem 0 0; padding: 0; font-size: 0.82rem; color: var(--text); }
+  .meets li { padding: 0.45rem 0; border-top: 1px solid var(--rule); }
+  .meets li:last-child { border-bottom: 1px solid var(--rule); }
+  .meets li::before { content: '→ '; color: var(--accent); }
+  .lens-note { margin-top: 1.25rem; color: var(--muted); font-size: 1rem; font-style: italic; }
+  .feed { padding-top: clamp(2.5rem, 6vw, 4.5rem); }
+  .bridge-body { max-width: var(--measure); color: var(--prose); font-size: 1.05rem; line-height: 1.65; }
+  .bridge-body p + p { margin-top: 0.9em; }
+  .bridge-body a:not(.cursor-link) { color: var(--text); text-decoration-color: var(--accent); }
+  .bridge-body strong { color: var(--text); font-weight: 600; }
+</style>

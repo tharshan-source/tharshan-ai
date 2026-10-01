@@ -2,14 +2,15 @@
 /** The latest (or featured) piece, set large at the top of the homepage. */
 import type { Writing } from '../lib/content';
 import { slugOf, readingTime, dotDate, isoDate } from '../lib/content';
+import { topicTitle } from '../lib/topics';
 interface Props { entry: Writing }
 const { entry } = Astro.props;
-const { title, description, date, category } = entry.data;
+const { title, description, date, format, topic } = entry.data;
 const minutes = readingTime(entry.body);
 const href = `/writing/${slugOf(entry)}`;
 ---
 <article class="feat with-side">
-  <p class="meta stack"><span class="a">{category.toLowerCase()}</span><time datetime={isoDate(date)}>{dotDate(date)}</time>{minutes && <span>{minutes} min</span>}</p>
+  <p class="meta stack"><a class="a" href={`/${topic}`}>{topicTitle(topic).toLowerCase()}</a><span>{format}</span><time datetime={isoDate(date)}>{dotDate(date)}</time>{minutes && <span>{minutes} min</span>}</p>
   <div>
     <h3><a href={href}>{title}</a></h3>
     <p class="deck">{description}</p>

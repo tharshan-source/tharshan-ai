@@ -3,14 +3,15 @@
 # Files starting with "_" are ignored, so this template never appears on the site.
 title: "Short, plain title"
 description: "One or two sentences on what the video covers."
-date: 2026-10-01
-platform: "LinkedIn"            # LinkedIn | YouTube | TikTok
+date: 2026-10-01                 # publication date; the newest video per topic is featured automatically
+platform: "LinkedIn"             # LinkedIn | YouTube | TikTok
 url: "https://www.linkedin.com/feed/update/urn:li:activity:0000000000000000000/"
-duration: "1:30"                # optional
-# embedId: "dQw4w9WgXcQ"        # optional, YouTube/TikTok video ID for future embeds
-# thumbnail: "./images/my-video.jpg"   # optional, local image next to this file
-# thumbnailAlt: "Describe the thumbnail"
-tags: ["AI economics"]
+topic: ai-economics              # primary subject: ai-economics | ai-infrastructure | human-wrapped-ai
+related: []                      # optional extra subjects, e.g. [ai-infrastructure]
+duration: "1:30"                 # optional
+# embedUrl: "https://www.youtube-nocookie.com/embed/VIDEO_ID"   # optional; not needed for LinkedIn
+# thumbnail: "./images/my-video.jpg"   # optional still, placed next to this file
+# thumbnailAlt: "Describe the image"
 featured: false
 draft: false
 ---

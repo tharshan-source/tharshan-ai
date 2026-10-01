@@ -5,5 +5,6 @@ date: 2026-07-29
 platform: 'LinkedIn'
 url: 'https://www.linkedin.com/feed/update/urn:li:activity:7488207960603734016/'
 duration: '1:32'
-tags: ['AI economics', 'Finance']
+topic: ai-economics
+related: [ai-infrastructure]
 ---

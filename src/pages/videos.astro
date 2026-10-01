@@ -5,11 +5,11 @@ import { getVideos } from '../lib/content';
 import { SITE } from '../site.config';
 const all = await getVideos();
 ---
-<Base title="Videos" description="Short videos on AI economics, compute, agents and human-wrapped AI.">
+<Base title="Video archive" description="Every short video on tharshan.ai, newest first.">
   <header class="wrap page-head">
-    <p class="mono kicker"><span class="a">03</span> / videos — {all.length} entries</p>
+    <p class="mono kicker"><span class="a">archive</span> / videos — {all.length} entries</p>
     <h1>Videos</h1>
-    <p class="lede">Short videos on AI economics, compute, agents and how AI actually gets used. Each one opens on the platform it was published on.</p>
+    <p class="lede">Every video, newest first. Each one opens on the platform it was published on. For subjects, start with <a href="/ai-economics">AI Economics</a>, <a href="/ai-infrastructure">AI Infrastructure</a> or <a href="/human-wrapped-ai">Human-Wrapped AI</a>.</p>
   </header>
   <div class="wrap">
     <ul class="list">{all.map((entry) => <VideoItem entry={entry} />)}</ul>
@@ -19,6 +19,7 @@ const all = await getVideos();
 <style>
   .list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
   .more { margin-top: 2rem; }
+  .lede a { color: var(--text); text-decoration-color: var(--accent); }
   .more a { color: var(--accent); text-decoration: none; }
   .more a:hover { text-decoration: underline; }
 </style>

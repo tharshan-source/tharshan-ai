@@ -45,7 +45,7 @@ const {
   noindex = false,
 } = Astro.props;
 
-const fullTitle = title ? `${title} — ${SITE.name}` : `${SITE.name} — on how AI is built, financed and governed`;
+const fullTitle = title ? `${title} | ${SITE.name}` : SITE.homeTitle;
 const path = cleanPath(Astro.url.pathname);
 const canonical = new URL(path, SITE.url).href;
 const imageUrl = new URL(image, SITE.url).href;

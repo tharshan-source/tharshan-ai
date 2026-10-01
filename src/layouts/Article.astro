@@ -5,17 +5,27 @@ import type { MarkdownHeading } from 'astro';
 import Base from './Base.astro';
 import WritingItem from '../components/WritingItem.astro';
 import { SITE } from '../site.config';
+import { topicTitle } from '../lib/topics';
 import { type Writing, getWriting, slugOf, readingTime, formatDate, dotDate, isoDate } from '../lib/content';
 
 interface Props { entry: Writing; headings: MarkdownHeading[] }
 const { entry, headings } = Astro.props;
 const toc = headings.filter((h) => h.depth === 2 && h.slug !== 'footnote-label');
-const { title, description, date, updated, category, tags, hero, references, originallyPublished, draft } = entry.data;
+const { title, description, date, updated, format, topic, related, tags, hero, references, originallyPublished, draft } = entry.data;
 const slug = slugOf(entry);
 const minutes = readingTime(entry.body);
 const url = `${SITE.url}/writing/${slug}`;
 const others = (await getWriting()).filter((e) => e.id !== entry.id).slice(0, 3);
 
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'tharshan.ai', item: SITE.url },
+    { '@type': 'ListItem', position: 2, name: topicTitle(topic), item: `${SITE.url}/${topic}` },
+    { '@type': 'ListItem', position: 3, name: title, item: url },
+  ],
+};
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
@@ -27,7 +37,7 @@ const jsonLd = {
   publisher: { '@type': 'Person', name: SITE.fullName, url: SITE.url },
   mainEntityOfPage: url,
   image: `${SITE.url}/og/writing/${slug}.png`,
-  articleSection: category,
+  articleSection: topicTitle(topic),
   keywords: tags.join(', '),
 };
 ---
@@ -40,12 +50,12 @@ const jsonLd = {
   published={date}
   modified={updated}
   tags={tags}
-  jsonLd={jsonLd}
+  jsonLd={[jsonLd, breadcrumb]}
   noindex={draft}
 >
   <article class="wrap article">
     <header class="head with-side">
-      <p class="meta stack crumb"><a class="a" href="/writing">writing</a><span>{category.toLowerCase()}</span>{draft && <span class="a">draft — not published</span>}</p>
+      <p class="meta stack crumb"><a class="a" href={`/${topic}`}>{topicTitle(topic).toLowerCase()}</a><span>{format}</span>{related.map((r) => <a href={`/${r}`}>+ {topicTitle(r).toLowerCase()}</a>)}{draft && <span class="a">draft — not published</span>}</p>
       <div>
         <h1>{title}</h1>
         <p class="dek">{description}</p>

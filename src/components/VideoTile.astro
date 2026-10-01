@@ -1,0 +1,42 @@
+---
+/**
+ * Typographic stand-in for a video thumbnail: deliberate, not "missing image".
+ * If the video file sets a `thumbnail`, that image is used instead.
+ */
+import { Image } from 'astro:assets';
+import type { Video } from '../lib/content';
+import { dotDate } from '../lib/content';
+import { topicTitle } from '../lib/topics';
+interface Props { entry: Video; size?: 'lg' | 'sm' }
+const { entry, size = 'lg' } = Astro.props;
+const { title, platform, duration, date, thumbnail, thumbnailAlt, topic } = entry.data;
+---
+{thumbnail ? (
+  <Image class:list={['tile', 'tile--img', size]} src={thumbnail} alt={thumbnailAlt ?? ''} widths={[480, 960]} sizes="(min-width: 60rem) 36rem, 100vw" />
+) : (
+  <div class:list={['tile', size]} aria-hidden="true">
+    <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
+    <div class="top"><span><span class="play">▸</span> {platform.toLowerCase()}</span>{duration && <span>{duration}</span>}</div>
+    <p class="title">{title}</p>
+    <div class="bot"><span>{topicTitle(topic).toLowerCase()}</span><span>{dotDate(date)}</span></div>
+  </div>
+)}
+<style>
+  .tile { position: relative; aspect-ratio: 16 / 9; width: 100%; display: block; background: var(--bg-2); border: 1px solid var(--rule); }
+  .tile--img { object-fit: cover; }
+  div.tile { display: flex; flex-direction: column; justify-content: space-between; padding: clamp(1rem, 2.5vw, 1.6rem); overflow: hidden; }
+  .c { position: absolute; width: 0.7rem; height: 0.7rem; border-color: var(--accent); border-style: solid; border-width: 0; }
+  .tl { top: 0.5rem; left: 0.5rem; border-top-width: 1px; border-left-width: 1px; }
+  .tr { top: 0.5rem; right: 0.5rem; border-top-width: 1px; border-right-width: 1px; }
+  .bl { bottom: 0.5rem; left: 0.5rem; border-bottom-width: 1px; border-left-width: 1px; }
+  .br { bottom: 0.5rem; right: 0.5rem; border-bottom-width: 1px; border-right-width: 1px; }
+  .top, .bot { display: flex; justify-content: space-between; gap: 1rem; font: 400 0.72rem/1 var(--mono); color: var(--faint); letter-spacing: 0.02em; }
+  .play { color: var(--accent); }
+  .title {
+    font-family: var(--serif); color: var(--text); letter-spacing: -0.015em; line-height: 1.12; max-width: 22ch;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .lg .title { font-size: clamp(1.4rem, 1rem + 1.8vw, 2.3rem); }
+  .sm .title { font-size: 1.1rem; }
+  .sm .top, .sm .bot { font-size: 0.66rem; }
+</style>

@@ -5,5 +5,6 @@ date: 2026-06-01
 platform: 'LinkedIn'
 url: 'https://www.linkedin.com/feed/update/urn:li:activity:7467181968175321088/'
 duration: '1:56'
-tags: ['Compute', 'Markets']
+topic: ai-infrastructure
+related: [ai-economics]
 ---

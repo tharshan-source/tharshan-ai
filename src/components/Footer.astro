@@ -5,10 +5,11 @@ const year = new Date().getFullYear();
 
 <footer class="site-footer">
   <div class="wrap inner">
-    <p>tharshan.ai — {SITE.footerLine.replace(/\.$/, '').toLowerCase()}</p>
+    <p>tharshan.ai — {SITE.footerLine.toLowerCase()}</p>
     <ul>
+      <li><a href="/about">about</a></li>
+      <li><a href={SITE.linkedin} rel="me noopener" target="_blank">contact ↗<span class="visually-hidden"> (LinkedIn, opens in a new tab)</span></a></li>
       <li><a href="/rss.xml">rss</a></li>
-      <li><a href={SITE.linkedin} rel="me noopener" target="_blank">linkedin ↗<span class="visually-hidden"> (opens in a new tab)</span></a></li>
       <li><span>© {year} {SITE.fullName.toLowerCase()}</span></li>
     </ul>
   </div>

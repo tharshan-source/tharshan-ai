@@ -1,0 +1,89 @@
+---
+/**
+ * The newest video for a topic, shown near the top of the topic page.
+ * Editorial preview by default. "▶ play" loads the platform's official
+ * embed only after the visitor clicks; nothing from the platform loads before.
+ */
+import type { Video } from '../lib/content';
+import { dotDate, isoDate } from '../lib/content';
+import { topicTitle, embedUrlFor, type TopicSlug } from '../lib/topics';
+import VideoTile from './VideoTile.astro';
+interface Props { entry: Video; current: TopicSlug }
+const { entry, current } = Astro.props;
+const { title, description, date, platform, url, duration, topic, related } = entry.data;
+const embed = embedUrlFor(entry);
+const others = [topic, ...related].filter((t) => t !== current);
+---
+<article class="vf with-side" data-video-feature>
+  <p class="meta stack"><span class="a">latest video</span><time datetime={isoDate(date)}>{dotDate(date)}</time>{duration && <span>{duration}</span>}</p>
+  <div class="grid">
+    <div class="media">
+      <a class="tile-link" href={url} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><VideoTile entry={entry} /></a>
+      {embed && <div class="frame" hidden data-embed-src={embed} data-title={title}></div>}
+    </div>
+    <div class="text">
+      <h2><a href={url} target="_blank" rel="noopener">{title}<span class="visually-hidden"> (watch on {platform}, opens in a new tab)</span></a></h2>
+      <p class="d">{description}</p>
+      {others.length > 0 && <p class="meta also"><span>also in</span>{others.map((t) => <a href={`/${t}`}>{topicTitle(t).toLowerCase()}</a>)}</p>}
+      <p class="actions">
+        {embed && <button type="button" class="play-here" data-play><span aria-hidden="true">▶&#xFE0E;</span> play</button>}
+        <a class="watch" href={url} target="_blank" rel="noopener">watch on {platform.toLowerCase()} ↗<span class="visually-hidden"> (opens in a new tab)</span></a>
+      </p>
+      {embed && <p class="meta note" data-note>“play” loads {platform}’s player, which may set cookies</p>}
+    </div>
+  </div>
+</article>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-video-feature]').forEach((root) => {
+    const btn = root.querySelector<HTMLButtonElement>('[data-play]');
+    const frame = root.querySelector<HTMLElement>('.frame');
+    const tile = root.querySelector<HTMLElement>('.tile-link');
+    const note = root.querySelector<HTMLElement>('[data-note]');
+    if (!btn || !frame || !tile) return;
+    btn.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = frame.dataset.embedSrc!;
+      iframe.title = frame.dataset.title ?? 'Video';
+      iframe.allow = 'encrypted-media; picture-in-picture; fullscreen';
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      let loaded = false;
+      iframe.addEventListener('load', () => { loaded = true; });
+      frame.appendChild(iframe);
+      frame.hidden = false;
+      tile.hidden = true;
+      btn.hidden = true;
+      if (note) note.hidden = true;
+      // If the official player doesn't load, fall back to the editorial preview.
+      setTimeout(() => {
+        if (!loaded) { frame.hidden = true; frame.innerHTML = ''; tile.hidden = false; }
+      }, 10000);
+    });
+  });
+</script>
+
+<style>
+  .vf { padding-block: 0.25rem 2.75rem; }
+  .vf > .meta { padding-top: 0.35rem; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem 2.5rem; align-items: start; }
+  @media (min-width: 60rem) { .grid { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); } }
+  .tile-link { display: block; text-decoration: none; }
+  .tile-link:hover :global(.tile) { border-color: var(--rule-2); }
+  .frame { width: 100%; max-width: 34rem; border: 1px solid var(--rule); background: var(--bg-2); }
+  .frame :global(iframe) { display: block; width: 100%; height: min(42rem, 80vh); border: 0; }
+  h2 { font-size: var(--step-2); line-height: 1.2; letter-spacing: -0.015em; }
+  h2 a { text-decoration: none; }
+  h2 a:hover { color: var(--accent-2); }
+  .d { color: var(--muted); margin-top: 0.8rem; line-height: 1.55; font-size: 1.02rem; }
+  .also { margin-top: 1rem; }
+  .also a { color: var(--muted); text-decoration: none; }
+  .also a:hover { color: var(--accent-2); }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.6rem 1.5rem; align-items: center; margin-top: 1.5rem; }
+  .play-here { font: 400 0.8rem/1 var(--mono); color: var(--accent); background: none; border: 1px solid var(--accent); padding: 0.65rem 0.9rem; cursor: pointer; }
+  .play-here:hover { color: var(--accent-2); border-color: var(--accent-2); }
+  .watch { font: 400 0.8rem/1 var(--mono); color: var(--muted); text-decoration: none; }
+  .watch:hover { color: var(--accent-2); }
+  .note { margin-top: 0.7rem; font-size: 0.68rem; color: var(--faint); opacity: 0.85; }
+  .note[hidden], .frame[hidden], .tile-link[hidden] { display: none; }
+</style>

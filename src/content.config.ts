@@ -16,8 +16,17 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-/** The content types used to label writing. Add to this list if needed. */
-export const WRITING_CATEGORIES = ['Essay', 'Research note', 'Analysis', 'Notes', 'Experiment'] as const;
+/**
+ * SUBJECTS: the site is organised around these three topics.
+ * Every piece of writing and every video has one primary `topic`
+ * and optional `related` topics, using exactly these values.
+ * (Titles and intros for each topic live in src/lib/topics.ts.)
+ */
+export const TOPICS = ['ai-economics', 'ai-infrastructure', 'human-wrapped-ai'] as const;
+const topic = z.enum(TOPICS);
+
+/** FORMATS for writing (videos are their own format). Add to this list if needed. */
+export const WRITING_FORMATS = ['essay', 'note', 'analysis', 'research note', 'experiment'] as const;
 
 const reference = z.object({
   title: z.string(),
@@ -35,7 +44,11 @@ const writing = defineCollection({
       description: z.string().max(260),
       date: z.coerce.date(),
       updated: z.coerce.date().optional(),
-      category: z.enum(WRITING_CATEGORIES),
+      /** Primary subject: ai-economics | ai-infrastructure | human-wrapped-ai */
+      topic: topic,
+      /** Optional additional subjects; the piece also appears on those topic pages. */
+      related: z.array(topic).default([]),
+      format: z.enum(WRITING_FORMATS),
       tags: z.array(z.string()).default([]),
       featured: z.boolean().default(false),
       /** Drafts show up in local development only, never in production. */
@@ -101,8 +114,16 @@ const videos = defineCollection({
       platform: z.enum(['LinkedIn', 'YouTube', 'TikTok']),
       /** Link to the video on its platform. */
       url: z.url(),
-      /** Optional: YouTube video ID or TikTok video ID to embed on the page. */
-      embedId: z.string().optional(),
+      /** Primary subject: ai-economics | ai-infrastructure | human-wrapped-ai */
+      topic: topic,
+      /** Optional additional subjects; the video also appears on those topic pages. */
+      related: z.array(topic).default([]),
+      /**
+       * Optional official embed URL, used only by the click-to-play option.
+       * LinkedIn: worked out automatically from the post URL, so leave this out.
+       * YouTube: https://www.youtube-nocookie.com/embed/VIDEO_ID
+       */
+      embedUrl: z.url().optional(),
       /** Optional thumbnail image (local file, relative to this .md file). */
       thumbnail: image().optional(),
       thumbnailAlt: z.string().optional(),

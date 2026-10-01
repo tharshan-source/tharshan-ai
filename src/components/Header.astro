@@ -12,11 +12,11 @@ const isActive = (href: string) => current === href || current.startsWith(href +
       <ul>
         {NAV.map((item) => (
           <li>
-            <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label.toLowerCase()}</a>
+            <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
           </li>
         ))}
         <li>
-          <a class="out" href={SITE.linkedin} rel="me noopener" target="_blank">linkedin <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+          <a class="out" href={SITE.linkedin} rel="me noopener" target="_blank">Contact <span aria-hidden="true">↗</span><span class="visually-hidden"> (LinkedIn, opens in a new tab)</span></a>
         </li>
       </ul>
     </nav>
@@ -45,23 +45,17 @@ const isActive = (href: string) => current === href || current.startsWith(href +
 
 <style>
   .site-header { border-bottom: 1px solid var(--rule); }
-  .bar { display: flex; align-items: baseline; gap: 0.75rem 2rem; flex-wrap: wrap; padding-block: 1.25rem; }
-  .bar nav { margin-left: auto; }
-  .theme {
-    font: 400 0.78rem/1 var(--mono); color: var(--faint); background: none; border: 0;
-    padding: 0.4rem 0; cursor: pointer; white-space: nowrap;
-  }
-  .theme .sep { color: var(--rule-2); }
-  .theme:hover { color: var(--muted); }
-  .theme:focus-visible { background: var(--inv-bg); color: var(--inv-fg); }
-  :global([data-theme='dark']) .theme .t-dark,
-  :global([data-theme='light']) .theme .t-light { color: var(--accent); }
-  .wordmark { font: 500 1rem/1 var(--mono); letter-spacing: -0.01em; text-decoration: none; color: var(--text); }
+  .bar { display: flex; align-items: baseline; gap: 0.75rem 2rem; padding-block: 1.25rem; }
+  .wordmark { font: 500 1rem/1 var(--mono); letter-spacing: -0.01em; text-decoration: none; color: var(--text); white-space: nowrap; }
   .wordmark .caret { color: var(--accent); }
   .wordmark:hover { color: var(--text); }
   .wordmark:hover .caret { color: var(--accent-2); }
-  nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.2rem 1.3rem; }
-  nav a { font: 400 0.85rem/1 var(--mono); color: var(--muted); text-decoration: none; padding-block: 0.4rem; display: inline-block; }
+  nav { margin-left: auto; }
+  nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.2rem 1.4rem; }
+  nav a {
+    font: 400 0.74rem/1 var(--mono); letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--muted); text-decoration: none; padding-block: 0.4rem; display: inline-block; white-space: nowrap;
+  }
   nav a:not(.out)::before { content: '[ '; }
   nav a:not(.out)::after { content: ' ]'; }
   nav a:not(.out)::before, nav a:not(.out)::after { color: transparent; transition: color 120ms ease; }
@@ -70,12 +64,34 @@ const isActive = (href: string) => current === href || current.startsWith(href +
   nav a[aria-current='page'] { color: var(--text); }
   nav a[aria-current='page']::before, nav a[aria-current='page']::after { color: var(--accent); }
   nav .out span[aria-hidden] { color: var(--accent); }
+
+  /* Theme: a utility, separated from navigation by a hairline */
+  .theme {
+    font: 400 0.74rem/1 var(--mono); color: var(--faint); background: none; border: 0;
+    border-left: 1px solid var(--rule); padding: 0.4rem 0 0.4rem 1.4rem; cursor: pointer; white-space: nowrap;
+  }
+  .theme .sep { color: var(--rule-2); }
+  .theme:hover { color: var(--muted); }
+  .theme:focus-visible { background: var(--inv-bg); color: var(--inv-fg); }
+  :global([data-theme='dark']) .theme .t-dark,
+  :global([data-theme='light']) .theme .t-light { color: var(--accent); }
+
+  /* Narrow desktop: let the nav wrap under the wordmark */
+  @media (max-width: 64rem) {
+    .bar { display: grid; grid-template-columns: 1fr auto; row-gap: 0.75rem; }
+    nav { grid-column: 1 / -1; grid-row: 2; margin-left: 0; }
+    nav ul { justify-content: flex-start; }
+    nav a:not(.out)::before { content: ''; }
+    nav a:not(.out)::after { content: ''; }
+    nav a[aria-current='page'] { color: var(--accent); }
+    .theme { grid-column: 2; grid-row: 1; border-left: 0; padding-left: 0; }
+  }
+
+  /* Mobile: an intentional two-column grid of subjects, research, contact */
   @media (max-width: 40rem) {
-    .bar { display: grid; grid-template-columns: 1fr auto; align-items: baseline; row-gap: 0.4rem; padding-block: 1.1rem 0.7rem; }
-    .bar nav { grid-column: 1 / -1; grid-row: 2; margin-left: 0; }
-    .theme { grid-column: 2; grid-row: 1; }
-    nav ul { gap: 0 1.1rem; }
-    nav a { font-size: 0.82rem; padding-block: 0.5rem; }
-    nav a:not(.out):not([aria-current])::before, nav a:not(.out):not([aria-current])::after { content: none; }
+    .bar { padding-block: 1.1rem 0.9rem; }
+    nav ul { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+    nav li { border-top: 1px solid var(--rule); }
+    nav a { display: block; padding-block: 0.75rem; font-size: 0.72rem; }
   }
 </style>

@@ -5,5 +5,6 @@ date: 2025-08-04
 platform: 'LinkedIn'
 url: 'https://www.linkedin.com/feed/update/urn:li:activity:7358126103502168064/'
 duration: '2:04'
-tags: ['Human-wrapped AI', 'Agents']
+topic: human-wrapped-ai
+related: []
 ---

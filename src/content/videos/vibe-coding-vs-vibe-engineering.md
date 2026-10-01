@@ -5,5 +5,6 @@ date: 2026-02-09
 platform: 'LinkedIn'
 url: 'https://www.linkedin.com/feed/update/urn:li:activity:7426605574307536896/'
 duration: '2:29'
-tags: ['Building', 'Experiments']
+topic: human-wrapped-ai
+related: []
 ---

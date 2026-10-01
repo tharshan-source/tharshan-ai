@@ -5,5 +5,6 @@ date: 2025-12-15
 platform: 'LinkedIn'
 url: 'https://www.linkedin.com/feed/update/urn:li:activity:7406320882131894272/'
 duration: '2:47'
-tags: ['AI economics', 'Infrastructure']
+topic: ai-economics
+related: [ai-infrastructure]
 ---

@@ -5,5 +5,6 @@ date: 2026-09-02
 platform: 'LinkedIn'
 url: 'https://www.linkedin.com/feed/update/urn:li:activity:7500889741576404993/'
 duration: '1:15'
-tags: ['AI economics', 'Investing']
+topic: ai-economics
+related: []
 ---

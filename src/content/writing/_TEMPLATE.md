@@ -4,7 +4,9 @@
 title: ""
 description: ""
 date: 2026-10-01
-category: "Essay"               # Essay | Research note | Analysis | Notes | Experiment
+topic: ai-economics             # primary subject: ai-economics | ai-infrastructure | human-wrapped-ai
+related: []                     # optional extra subjects, e.g. [ai-infrastructure]
+format: essay                   # essay | note | analysis | research note | experiment
 tags: []
 featured: false
 draft: true                     # change to false when ready to publish

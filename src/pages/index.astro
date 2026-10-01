@@ -1,21 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
-import SectionHead from '../components/SectionHead.astro';
-import WritingItem from '../components/WritingItem.astro';
-import FeaturedWriting from '../components/FeaturedWriting.astro';
-import ResearchItem from '../components/ResearchItem.astro';
-import VideoItem from '../components/VideoItem.astro';
-import { getWriting, getResearch, getVideos, pick, dotDate } from '../lib/content';
+import { getResearch, pick, slugOf } from '../lib/content';
+import { TOPIC_LIST } from '../lib/topics';
 import { SITE } from '../site.config';
 
-const allWriting = await getWriting();
-const [featured, ...moreWriting] = pick(allWriting, 5);
-const research = pick(await getResearch(), 2);
-const videos = pick(await getVideos(), 3);
-const updated = dotDate(new Date());
+const doors = TOPIC_LIST;
+const [paper] = pick(await getResearch(), 1);
 
 const jsonLd = [
-  { '@context': 'https://schema.org', '@type': 'WebSite', name: 'tharshan.ai', url: SITE.url, author: { '@id': `${SITE.url}/#person` } },
+  { '@context': 'https://schema.org', '@type': 'WebSite', name: 'tharshan.ai', url: SITE.url, description: SITE.description, author: { '@id': `${SITE.url}/#person` } },
   {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -31,63 +24,74 @@ const jsonLd = [
 
 <Base jsonLd={jsonLd}>
   <div class="wrap hero">
-    <p class="mono kicker"><span class="a">00</span> / index — updated {updated}</p>
     <h1>AI is <span class="nw">human-wrapped.</span></h1>
-    <p class="descriptor">Musings on AI’s impact on governance, economics and infrastructure, informed by lived experience.</p>
+    <p class="descriptor">Musings on AI’s impact on economics, governance, and infrastructure, informed by lived experiences.</p>
   </div>
 
-  <section class="wrap section" aria-labelledby="h-writing">
-    <SectionHead id="h-writing" n="01" title="Writing" href={allWriting.length > 1 ? '/writing' : undefined} linkLabel={`all ${allWriting.length}`} />
-    {featured ? (
-      <>
-        <FeaturedWriting entry={featured} />
-        {moreWriting.length > 0 && <ul class="entries">{moreWriting.map((entry) => <WritingItem entry={entry} />)}</ul>}
-      </>
-    ) : (
-      <p class="mono pending">// first essays in progress — <a href="/rss.xml">rss</a></p>
-    )}
-  </section>
+  <nav class="wrap doors" aria-label="Subjects">
+    <ol>
+      {doors.map((d) => (
+        <li>
+          <a href={`/${d.slug}`}>
+            <span class="n mono">{d.n} /</span>
+            <span class="body">
+              <span class="title">{d.title.split(' ').map((w, i) => <>{i > 0 && ' '}<span class="nw">{w}</span></>)}</span>
+              <span class="desc">{d.descriptor}</span>
+            </span>
+            <span class="go mono"><span class="explore">explore →</span></span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </nav>
 
-  <section class="wrap section" aria-labelledby="h-research">
-    <SectionHead id="h-research" n="02" title="Research" href="/research" />
-    <ul class="entries">{research.map((entry) => <ResearchItem entry={entry} />)}</ul>
-  </section>
+  {paper && (
+    <section class="wrap research" aria-labelledby="h-research">
+      <p class="mono label-line"><span class="a">research</span> / {paper.data.venue.toLowerCase()}</p>
+      <h2 id="h-research"><a href={`/research/${slugOf(paper)}`}>{paper.data.title}</a></h2>
+      <p class="r-meta mono">published peer-reviewed research · {paper.data.year} — <a href="/research">view research →</a></p>
+    </section>
+  )}
 
-  <section class="wrap section" aria-labelledby="h-videos">
-    <SectionHead id="h-videos" n="03" title="Videos" href="/videos" />
-    <ul class="video-grid">{videos.map((entry) => <VideoItem entry={entry} compact />)}</ul>
-  </section>
-
-  <section class="wrap section" aria-label="About the author">
-    <p class="mono context">
-      <span class="a">//</span> written by tharshan: ai &amp; cloud economics at cloud capital · founded ai launchpad · published in finance research letters — <a href="/about">about →</a>
-    </p>
-  </section>
+  <div class="wrap"><p class="mono context"><span class="a">//</span> informed by building, published research, and work with operators, investors and governments.</p></div>
 </Base>
 
 <style>
-  .hero { padding-top: clamp(4rem, 12vw, 9.5rem); padding-bottom: clamp(1rem, 3vw, 2rem); }
-  .kicker { margin-bottom: clamp(2rem, 4vw, 3rem); }
+  .hero { padding-top: clamp(4.5rem, 13vw, 10rem); padding-bottom: clamp(3.5rem, 8vw, 6rem); }
   h1 {
     font-size: clamp(2.2rem, 0.5rem + 8.6vw, 7.25rem); line-height: 0.98; letter-spacing: -0.04em;
     font-weight: 400; max-width: 12ch; color: var(--text);
   }
-  h1 .nw { white-space: nowrap; }
-  .descriptor {
-    margin-top: clamp(1.75rem, 3vw, 2.5rem); max-width: 32rem;
-    font-size: var(--step-1); line-height: 1.5; color: var(--muted);
+  h1 .nw, .title .nw { white-space: nowrap; }
+  .descriptor { margin-top: clamp(1.75rem, 3vw, 2.5rem); max-width: 32rem; font-size: var(--step-1); line-height: 1.5; color: var(--muted); }
+
+  /* Three editorial doors: wide ruled rows, like chapters in a contents page */
+  .doors ol { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+  .doors li { border-bottom: 1px solid var(--rule); }
+  .doors a {
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.6rem 3rem;
+    padding-block: clamp(1.5rem, 3vw, 2.25rem); text-decoration: none; color: inherit;
   }
+  @media (min-width: 60rem) { .doors a { grid-template-columns: var(--side) minmax(0, 1fr) 10rem; align-items: baseline; } }
+  .n { font-size: 0.78rem; color: var(--accent); }
+  .title { display: block; font-size: clamp(1.9rem, 1.1rem + 3vw, 3.4rem); line-height: 1.05; letter-spacing: -0.028em; transition: color 120ms ease; }
+  .desc { display: block; margin-top: 0.65rem; max-width: 34rem; color: var(--muted); font-size: 1.02rem; line-height: 1.5; }
+  .go { display: flex; gap: 1rem; justify-content: space-between; font-size: 0.78rem; color: var(--faint); }
+  @media (min-width: 60rem) { .go { flex-direction: column; align-items: flex-end; gap: 0.5rem; } }
+  .explore { color: var(--muted); transition: color 120ms ease; }
+  .doors a:hover .title { color: var(--accent-2); }
+  .doors a:hover .explore { color: var(--accent); }
+  .doors a:hover .n::after { content: '_'; }
 
-  .pending { padding-top: 0.25rem; }
-  .pending a { color: var(--accent); text-decoration: none; }
-  .pending a:hover { text-decoration: underline; }
+  /* One compact research line */
+  .research { padding-top: clamp(4rem, 8vw, 6rem); }
+  .label-line { font-size: 0.78rem; color: var(--faint); margin-bottom: 0.9rem; }
+  .research h2 { font-size: var(--step-2); line-height: 1.2; max-width: 30ch; }
+  .research h2 a { text-decoration: none; }
+  .research h2 a:hover { color: var(--accent-2); }
+  .r-meta { margin-top: 0.8rem; font-size: 0.78rem; color: var(--faint); }
+  .r-meta a { color: var(--accent); text-decoration: none; white-space: nowrap; }
+  .r-meta a:hover { text-decoration: underline; }
 
-  .video-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 3rem; }
-  @media (min-width: 60rem) { .video-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  .video-grid > :global(.video:first-child) { border-top: 0; }
-  @media (min-width: 60rem) { .video-grid > :global(.video) { border-top: 0; } .video-grid :global(a) { padding-top: 0.25rem; } }
-
-  .context { max-width: 52rem; border-top: 1px solid var(--rule); padding-top: 1.25rem; line-height: 1.7; }
-  .context a { color: var(--accent); text-decoration: none; white-space: nowrap; }
-  .context a:hover { text-decoration: underline; }
+  .context { padding-top: clamp(4rem, 8vw, 6rem); font-size: 0.78rem; color: var(--faint); max-width: 48rem; }
 </style>

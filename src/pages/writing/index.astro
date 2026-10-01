@@ -2,19 +2,18 @@
 import Base from '../../layouts/Base.astro';
 import WritingItem from '../../components/WritingItem.astro';
 import { getWriting } from '../../lib/content';
-import { WRITING_CATEGORIES } from '../../content.config';
-import { SITE } from '../../site.config';
+import { WRITING_FORMATS } from '../../content.config';
 
 const all = await getWriting();
-const used = WRITING_CATEGORIES.filter((c) => all.some((e) => e.data.category === c));
+const used = WRITING_FORMATS.filter((c) => all.some((e) => e.data.format === c));
 const years = [...new Set(all.map((e) => e.data.date.getUTCFullYear()))];
 ---
-<Base title="Writing" description="Essays, research notes, analysis and experiments on how AI is built, financed and governed.">
+<Base title="Writing archive" description="Every essay, note and analysis on tharshan.ai, newest first.">
   <header class="wrap page-head">
-    <p class="mono kicker"><span class="a">01</span> / writing{all.length > 0 && <> — {all.length} {all.length === 1 ? 'entry' : 'entries'}</>}</p>
+    <p class="mono kicker"><span class="a">archive</span> / writing{all.length > 0 && <> — {all.length} {all.length === 1 ? 'entry' : 'entries'}</>}</p>
     <h1>Writing</h1>
-    <p class="lede">Essays, research notes, analysis and experiments on how AI is built, financed and governed.</p>
-    {used.length > 1 && <p class="meta kinds">{used.map((c) => <span>{c.toLowerCase()}</span>)}</p>}
+    <p class="lede">Every essay, note and analysis, newest first. For subjects, start with <a href="/ai-economics">AI Economics</a>, <a href="/ai-infrastructure">AI Infrastructure</a> or <a href="/human-wrapped-ai">Human-Wrapped AI</a>.</p>
+    {used.length > 1 && <p class="meta kinds">{used.map((c) => <span>{c}</span>)}</p>}
   </header>
   <div class="wrap">
     {all.length ? (
@@ -40,5 +39,5 @@ const years = [...new Set(all.map((e) => e.data.date.getUTCFullYear()))];
   .kinds { margin-top: 1.5rem; }
   .year + .year { margin-top: 3.5rem; }
   .yr { font-size: 0.78rem; color: var(--accent); margin-bottom: 0.9rem; letter-spacing: 0; }
-  .empty a { color: var(--text); text-decoration-color: var(--accent); }
+  .empty a, .lede a { color: var(--text); text-decoration-color: var(--accent); }
 </style>

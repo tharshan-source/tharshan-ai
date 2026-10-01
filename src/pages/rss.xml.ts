@@ -2,6 +2,7 @@ import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
 import { getWriting, getResearch, slugOf } from '../lib/content';
 import { SITE } from '../site.config';
+import { topicTitle } from '../lib/topics';
 
 export async function GET(context: APIContext) {
   const writing = (await getWriting()).filter((e) => !e.data.draft);
@@ -12,7 +13,7 @@ export async function GET(context: APIContext) {
       description: e.data.description,
       pubDate: e.data.date,
       link: `/writing/${slugOf(e)}`,
-      categories: [e.data.category, ...e.data.tags],
+      categories: [topicTitle(e.data.topic), ...e.data.related.map(topicTitle), e.data.format],
     })),
     ...research.map((e) => ({
       title: e.data.title,

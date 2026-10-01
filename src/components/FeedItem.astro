@@ -1,0 +1,30 @@
+---
+/** One row in a topic feed: a writing piece (internal) or a video (external). */
+import type { FeedItem } from '../lib/topics';
+import { topicTitle, type TopicSlug } from '../lib/topics';
+import { slugOf, readingTime, dotDate, isoDate } from '../lib/content';
+interface Props { item: FeedItem; current?: TopicSlug }
+const { item, current } = Astro.props;
+const d = item.entry.data;
+const isVideo = item.kind === 'video';
+const href = isVideo ? (d as any).url : `/writing/${slugOf(item.entry as any)}`;
+const format = isVideo ? 'video' : (d as any).format;
+const others = [d.topic, ...d.related].filter((t: string) => t !== current) as TopicSlug[];
+const end = isVideo ? (d as any).duration : (() => { const m = readingTime((item.entry as any).body); return m ? `${m} min` : ''; })();
+---
+<li class="entry">
+  <a href={href} {...(isVideo ? { target: '_blank', rel: 'noopener' } : {})}>
+    <p class="meta"><time datetime={isoDate(d.date)}>{dotDate(d.date)}</time><span class="a">{format}</span></p>
+    <div>
+      <h3 class="entry-title">{d.title}{isVideo && <span class="ext-mark" aria-hidden="true"> ↗</span>}{isVideo && <span class="visually-hidden"> (watch on {(d as any).platform}, opens in a new tab)</span>}</h3>
+      <p class="entry-desc">{d.description}</p>
+      {others.length > 0 && <p class="meta also">{others.map((t) => <span>{topicTitle(t).toLowerCase()}</span>)}</p>}
+    </div>
+    <p class="meta entry-end">{end && <span>{end}</span>}</p>
+  </a>
+</li>
+<style>
+  .ext-mark { font: 400 0.75em var(--mono); color: var(--accent); }
+  .also { margin-top: 0.55rem; }
+  .also span::before { content: '+ '; color: var(--rule-2); }
+</style>
