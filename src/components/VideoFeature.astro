@@ -8,17 +8,19 @@ import type { Video } from '../lib/content';
 import { dotDate, isoDate } from '../lib/content';
 import { topicTitle, embedUrlFor, type TopicSlug } from '../lib/topics';
 import VideoTile from './VideoTile.astro';
-interface Props { entry: Video; current: TopicSlug }
-const { entry, current } = Astro.props;
+import { topicBySlug } from '../lib/topics';
+interface Props { entry: Video; current: TopicSlug; rec?: string }
+const { entry, current, rec } = Astro.props;
+const art = topicBySlug(current)?.visual?.artwork;
 const { title, description, date, platform, url, duration, topic, related } = entry.data;
 const embed = embedUrlFor(entry);
 const others = [topic, ...related].filter((t) => t !== current);
 ---
 <article class="vf with-side" data-video-feature>
-  <p class="meta stack"><span class="a">latest video</span><time datetime={isoDate(date)}>{dotDate(date)}</time>{duration && <span>{duration}</span>}</p>
+  <p class="meta stack"><span class="a">selected record</span>{rec && <span class="vrec">rec {rec}</span>}<time datetime={isoDate(date)}>{dotDate(date)}</time>{duration && <span class="vdur">{duration}</span>}</p>
   <div class="grid">
     <div class="media">
-      <a class="tile-link" href={url} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><VideoTile entry={entry} /></a>
+      <a class="tile-link" href={url} target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><VideoTile entry={entry} art={art} /></a>
       {embed && <div class="frame" hidden data-embed-src={embed} data-title={title}></div>}
     </div>
     <div class="text">
@@ -65,6 +67,7 @@ const others = [topic, ...related].filter((t) => t !== current);
 
 <style>
   .vf { padding-block: 0.25rem 2.75rem; }
+  @media (max-width: 60rem) { .vf > .meta { flex-direction: row !important; flex-wrap: wrap; gap: 0 0.9rem; } .vrec, .vdur { display: none; } }
   .vf > .meta { padding-top: 0.35rem; }
   .grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem 2.5rem; align-items: start; }
   @media (min-width: 60rem) { .grid { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); } }

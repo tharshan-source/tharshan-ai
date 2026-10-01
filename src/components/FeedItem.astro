@@ -3,8 +3,8 @@
 import type { FeedItem } from '../lib/topics';
 import { topicTitle, type TopicSlug } from '../lib/topics';
 import { slugOf, readingTime, dotDate, isoDate } from '../lib/content';
-interface Props { item: FeedItem; current?: TopicSlug }
-const { item, current } = Astro.props;
+interface Props { item: FeedItem; current?: TopicSlug; rec?: string }
+const { item, current, rec } = Astro.props;
 const d = item.entry.data;
 const isVideo = item.kind === 'video';
 const href = isVideo ? (d as any).url : `/writing/${slugOf(item.entry as any)}`;
@@ -13,8 +13,9 @@ const others = [d.topic, ...d.related].filter((t: string) => t !== current) as T
 const end = isVideo ? (d as any).duration : (() => { const m = readingTime((item.entry as any).body); return m ? `${m} min` : ''; })();
 ---
 <li class="entry">
-  <a href={href} {...(isVideo ? { target: '_blank', rel: 'noopener' } : {})}>
-    <p class="meta"><time datetime={isoDate(d.date)}>{dotDate(d.date)}</time><span class="a">{format}</span></p>
+  <a href={href} class="acq" {...(isVideo ? { target: '_blank', rel: 'noopener' } : {})}>
+    <i class="k tl"></i><i class="k br"></i>
+    <div class="mcol">{rec && <p class="rec">rec {rec}</p>}<p class="meta"><time datetime={isoDate(d.date)}>{dotDate(d.date)}</time><span class="a">{format}</span></p></div>
     <div>
       <h3 class="entry-title">{d.title}{isVideo && <span class="ext-mark" aria-hidden="true"> ↗</span>}{isVideo && <span class="visually-hidden"> (watch on {(d as any).platform}, opens in a new tab)</span>}</h3>
       <p class="entry-desc">{d.description}</p>
@@ -24,6 +25,12 @@ const end = isVideo ? (d as any).duration : (() => { const m = readingTime((item
   </a>
 </li>
 <style>
+  /* A row is acquired on hover/focus. */
+  .k { --k: transparent; }
+  a:hover > .k, a:focus-visible > .k { --k: var(--accent); }
+  .k.tl { transform: translate(-0.6rem, 0.5rem); } .k.br { transform: translate(0.6rem, -0.5rem); }
+  .rec { margin: 0 0 0.3rem; }
+  @media (max-width: 40rem) { .rec { display: none; } }
   .ext-mark { font: 400 0.75em var(--mono); color: var(--accent); }
   .also { margin-top: 0.55rem; }
   .also span::before { content: '+ '; color: var(--rule-2); }

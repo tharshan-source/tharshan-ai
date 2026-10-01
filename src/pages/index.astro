@@ -1,11 +1,15 @@
 ---
 import Base from '../layouts/Base.astro';
-import { getResearch, pick, slugOf } from '../lib/content';
+import { Image } from 'astro:assets';
+import { getResearch, getWriting, getVideos, pick, slugOf, dotDate } from '../lib/content';
 import { TOPIC_LIST } from '../lib/topics';
 import { SITE } from '../site.config';
 
 const doors = TOPIC_LIST;
-const [paper] = pick(await getResearch(), 1);
+const research = await getResearch();
+const [paper] = pick(research, 1);
+const writing = await getWriting(), videos = await getVideos();
+const last = [...writing, ...videos].map((e) => e.data.date).sort((a, b) => b.valueOf() - a.valueOf())[0];
 
 const jsonLd = [
   { '@context': 'https://schema.org', '@type': 'WebSite', name: 'tharshan.ai', url: SITE.url, description: SITE.description, author: { '@id': `${SITE.url}/#person` } },
@@ -26,19 +30,28 @@ const jsonLd = [
   <div class="wrap hero">
     <h1>AI is <span class="nw">human-wrapped.</span></h1>
     <p class="descriptor">Musings on AI’s impact on economics, governance, and infrastructure, informed by lived experiences.</p>
+    <p class="sys status">3 subjects · {writing.length} essays · {videos.length} videos · {research.length} {research.length === 1 ? 'paper' : 'papers'}{last && <> · last record {dotDate(last)}</>}</p>
   </div>
 
   <nav class="wrap doors" aria-label="Subjects">
     <ol>
       {doors.map((d) => (
         <li>
-          <a href={`/${d.slug}`}>
-            <span class="n mono">{d.n} /</span>
+          <a href={`/${d.slug}`} class="door acq">
+            <i class="k tl"></i><i class="k tr"></i><i class="k bl"></i><i class="k br"></i>
+            <span class="n mono">{d.n} /<span class="obsv"> observed: {d.observed}</span></span>
             <span class="body">
               <span class="title">{d.title.split(' ').map((w, i) => <>{i > 0 && ' '}<span class="nw">{w}</span></>)}</span>
               <span class="desc">{d.descriptor}</span>
             </span>
-            <span class="go mono"><span class="explore">explore →</span></span>
+            {d.visual ? (
+              <span class="vp acq signal" aria-hidden="true">
+                <Image src={d.visual.fragment} alt="" widths={[240, 480]} sizes="15rem" loading="lazy" />
+                <i class="k tl"></i><i class="k tr"></i><i class="k bl"></i><i class="k br"></i>
+              </span>
+            ) : (
+              <span class="go mono"><span class="explore">explore →</span></span>
+            )}
           </a>
         </li>
       ))}
@@ -90,8 +103,30 @@ const jsonLd = [
   .research h2 a { text-decoration: none; }
   .research h2 a:hover { color: var(--accent-2); }
   .r-meta { margin-top: 0.8rem; font-size: 0.78rem; color: var(--faint); }
-  .r-meta a { color: var(--accent); text-decoration: none; white-space: nowrap; }
-  .r-meta a:hover { text-decoration: underline; }
+  .r-meta a { color: var(--accent); text-decoration: underline; text-underline-offset: 0.2em; white-space: nowrap; }
+  .r-meta a:hover { color: var(--accent-2); }
+
+  .status { margin-top: 1.6rem; }
+  /* A subject row is acquired on hover/focus; corners settle a few pixels into place. */
+  .door > .k { --k: transparent; }
+  .door:hover > .k, .door:focus-visible > .k { --k: var(--accent); transform: none; }
+  .door > .k.tl { transform: translate(-6px, -2px); } .door > .k.tr { transform: translate(6px, -2px); }
+  .door > .k.bl { transform: translate(-6px, 2px); } .door > .k.br { transform: translate(6px, 2px); }
+  .obsv { color: var(--faint); letter-spacing: 0.04em; }
+  /* Optional viewport into the subject image (desktop only) */
+  .vp { display: none; }
+  @media (min-width: 60rem) {
+    .doors a:has(.vp) { grid-template-columns: var(--side) minmax(0, 1fr) 15rem; align-items: center; }
+    .vp { display: block; width: 15rem; aspect-ratio: 16 / 9; overflow: hidden; }
+    .vp :global(img) { width: 100%; height: 100%; object-fit: cover; opacity: 0.82; transition: opacity 160ms ease; }
+    .door:hover .vp :global(img) { opacity: 1; }
+    .vp .k { width: 0.6rem; height: 0.6rem; }
+    .vp .k.tl { transform: translate(-2px, -2px); } .vp .k.br { transform: translate(2px, 2px); }
+    .vp .k.tr { transform: translate(2px, -2px); } .vp .k.bl { transform: translate(-2px, 2px); }
+    .door:hover .vp .k { transform: none; }
+  }
+  @media (max-width: 40rem) { .status, .obsv { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .door > .k, .vp :global(img) { transition: none; } }
 
   .context { padding-top: clamp(4rem, 8vw, 6rem); font-size: 0.78rem; color: var(--faint); max-width: 48rem; }
 </style>

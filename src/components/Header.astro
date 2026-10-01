@@ -10,9 +10,9 @@ const isActive = (href: string) => current === href || current.startsWith(href +
     <a class="wordmark" href="/" aria-label={`${SITE.name}, home`}>tharshan.ai<span class="caret" aria-hidden="true">_</span></a>
     <nav aria-label="Primary">
       <ul>
-        {NAV.map((item) => (
+        {NAV.map((item, i) => (
           <li>
-            <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
+            <a class="nv" href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{i < 3 && <span class="ix" aria-hidden="true">{`0${i + 1}`}</span>}{item.label}</a>
           </li>
         ))}
         <li>
@@ -37,7 +37,7 @@ const isActive = (href: string) => current === href || current.startsWith(href +
   btn?.addEventListener('click', () => {
     const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
     root.setAttribute('data-theme', next);
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'light' ? '#f3f0e8' : '#0d0f10');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'light' ? '#f4f4f1' : '#0d0f10');
     try { localStorage.setItem('theme', next); } catch {}
     label();
   });
@@ -50,19 +50,25 @@ const isActive = (href: string) => current === href || current.startsWith(href +
   .wordmark .caret { color: var(--accent); }
   .wordmark:hover { color: var(--text); }
   .wordmark:hover .caret { color: var(--accent-2); }
-  nav { margin-left: auto; }
+  nav { margin-left: auto; min-width: 0; }
   nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.2rem 1.4rem; }
   nav a {
     font: 400 0.74rem/1 var(--mono); letter-spacing: 0.07em; text-transform: uppercase;
     color: var(--muted); text-decoration: none; padding-block: 0.4rem; display: inline-block; white-space: nowrap;
   }
-  nav a:not(.out)::before { content: '[ '; }
-  nav a:not(.out)::after { content: ' ]'; }
-  nav a:not(.out)::before, nav a:not(.out)::after { color: transparent; transition: color 120ms ease; }
+  /* Selected = acquired: corner marks settle into place around the current subject. */
+  .nv { position: relative; padding-inline: 0.45rem; }
+  .nv::before, .nv::after { content: ''; position: absolute; width: 0.42rem; height: 0.42rem; border: 0 solid transparent;
+    transition: border-color 140ms ease, transform 160ms ease; }
+  .nv::before { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; transform: translate(-3px, -3px); }
+  .nv::after { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; transform: translate(3px, 3px); }
+  .nv:hover::before, .nv:hover::after { border-color: var(--rule-2); transform: none; }
+  .nv[aria-current='page']::before, .nv[aria-current='page']::after { border-color: var(--accent); transform: none; }
+  .ix { color: var(--faint); margin-right: 0.55em; font-size: 0.92em; }
+  .nv[aria-current='page'] .ix { color: var(--accent); }
   nav a:hover { color: var(--text); }
-  nav a:not(.out):hover::before, nav a:not(.out):hover::after { color: var(--rule-2); }
   nav a[aria-current='page'] { color: var(--text); }
-  nav a[aria-current='page']::before, nav a[aria-current='page']::after { color: var(--accent); }
+  @media (prefers-reduced-motion: reduce) { .nv::before, .nv::after { transition: none; } }
   nav .out span[aria-hidden] { color: var(--accent); }
 
   /* Theme: a utility, separated from navigation by a hairline */
@@ -81,17 +87,16 @@ const isActive = (href: string) => current === href || current.startsWith(href +
     .bar { display: grid; grid-template-columns: 1fr auto; row-gap: 0.75rem; }
     nav { grid-column: 1 / -1; grid-row: 2; margin-left: 0; }
     nav ul { justify-content: flex-start; }
-    nav a:not(.out)::before { content: ''; }
-    nav a:not(.out)::after { content: ''; }
-    nav a[aria-current='page'] { color: var(--accent); }
+    nav ul { gap: 0.2rem 1rem; }
     .theme { grid-column: 2; grid-row: 1; border-left: 0; padding-left: 0; }
   }
 
   /* Mobile: an intentional two-column grid of subjects, research, contact */
   @media (max-width: 40rem) {
     .bar { padding-block: 1.1rem 0.9rem; }
-    nav ul { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
-    nav li { border-top: 1px solid var(--rule); }
-    nav a { display: block; padding-block: 0.75rem; font-size: 0.72rem; }
+    /* Editorial first: two quiet wrapped lines, no indices, no sideways scrolling. */
+    nav ul { position: relative; display: flex; flex-wrap: wrap; gap: 0.15rem 1.15rem; padding-block: 0.1rem 0.2rem; }
+    nav a { padding-block: 0.55rem; font-size: 0.7rem; }
+    .ix { display: none; }
   }
 </style>

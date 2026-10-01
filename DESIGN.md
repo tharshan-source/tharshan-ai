@@ -1,87 +1,79 @@
-# Design notes: "Terminal Editorial"
+# Design notes
 
-An independent editorial and research notebook with subtle old-computer DNA.
-The principle: **the work is the brand.** Text is the primary visual material;
-the computer influence comes from typography and small interface details and should be
-noticed on a second look, not the first.
+**tharshan.ai is a human editorial archive viewed through a quiet machine interface.**
+
+The interface observes and classifies; the writing argues. The interface should never compete with the ideas, and it gets quieter once a reader is inside an article.
+
+Imagery (subject images, covers, video artwork, share images, historical media) is documented separately in [`docs/visual-system.md`](docs/visual-system.md).
+
+## Two voices
+
+- **IBM Plex Mono is the system:** navigation, dates, record identifiers, taxonomy, format, status, labels, metadata.
+- **IBM Plex Serif is the human:** titles, decks, arguments, prose. On the Human-Wrapped AI page the seven conditions are set in serif and their indices in mono, so the system and the human sit side by side.
+
+Body text is about 19px with a 1.72 line height and a 40rem (~68 character) measure. Mono is lowercase in running metadata and uppercase only for small system labels. Fonts are self-hosted and the two main files are preloaded. The whole site is never set in mono.
 
 ## Colour
 
-Dark by default for every first-time visitor. Readers can switch to the light companion
-theme with the mono `dark / light` control in the header; the choice is stored in
-`localStorage` and applied before first paint. All tokens live at the top of
-`src/styles/global.css`.
+Dark is the default for every first-time visitor; the `dark / light` control switches theme and remembers the choice (`localStorage`, applied before first paint). Tokens are at the top of `src/styles/global.css`.
 
-| Token | Dark | Light | Use | Contrast (dark / light) |
-| --- | --- | --- | --- | --- |
-| `--bg` | `#0d0f10` | `#f3f0e8` | page | |
-| `--bg-2` | `#15181a` | `#e9e5da` | callouts, code | |
-| `--text` | `#e8e3d9` | `#1a1c1d` | headings, primary | 15.0 / 15.0 |
-| `--prose` | `#ddd8ce` | `#26292a` | long-form body (slightly softer to avoid glare) | 13.5 / 12.9 |
-| `--muted` | `#a8a39a` | `#55534e` | decks, secondary | 7.7 / 6.7 |
-| `--faint` | `#8a857c` | `#67645d` | metadata | 5.2 / 5.2 |
-| `--rule` | `#2a2f32` | `#d6d1c5` | hairlines | decorative |
-| `--accent` | `#8fbf8f` | `#336b3a` | the signal: links, markers, active states | 9.2 / 5.6 |
-| `--accent-2` | `#a7d7a7` | `#24522a` | hover | 11.8 / 8.0 |
+| Token | Dark (observer) | Light (clinical) | Use |
+| --- | --- | --- | --- |
+| `--bg` | `#0d0f10` | `#f4f4f1` | page |
+| `--bg-2` | `#15181a` | `#eaeae6` | raised: record cards, callouts, code |
+| `--text` | `#e8e3d9` | `#121415` | headings, primary text |
+| `--prose` | `#ddd8ce` | `#1d2021` | long-form body |
+| `--muted` | `#a8a39a` | `#4c4f50` | decks, secondary text |
+| `--faint` | `#8a857c` | `#5f6263` | metadata (≥ 5:1 in both themes) |
+| `--rule` / `--rule-2` | `#2a2f32` / `#3a4044` | `#d8d9d5` / `#b9bbb7` | hairlines, inactive corners |
+| `--accent` | `#8fbf8f` | `#2e6a3a` | **the signal** |
 
-**Green is a signal, never a surface.** It is used for link underlines, section numbers,
-the active nav bracket, category labels, footnote markers and hover states. Body text is
-never green, and no element has a green background.
+**Green is a signal, never a surface.** It marks what is selected or current: the active navigation item, the acquisition bracket, the subject index, record links, hover. Body text is never green, and nothing has a green background. State never depends on colour alone: the active nav item is also framed by corner marks, and rows gain corners on hover and focus.
 
-## Typography
+Light mode is the same publication, slightly more austere: cooler off-white, near-black ink, crisper rules. The subject images stay dark in both themes. They are observed frames, not decoration.
 
-Two voices from one family, so the pairing looks deliberate:
+## The observation grammar (the complete list)
 
-- **IBM Plex Serif** (400, 400 italic, 500, 600): thesis, titles, decks, all prose.
-  Body is ~19px with a 1.72 line height and a 40rem (~68 character) measure.
-- **IBM Plex Mono** (400, 500): wordmark, navigation, dates, categories, section markers,
-  metadata, tables, footnote markers, labels, footer.
+Use these, and only these:
 
-Mono text is lowercase by convention. Fonts are self-hosted and the two main files are preloaded.
+1. **Acquisition corners** (`.acq` + `<i class="k …">`). Corner marks frame something selected: the current nav item, a hovered or focused subject row or archive row, the selected video record, the research record card, the model-capability box. They settle 3–6 px into place. Green when selected, otherwise hairline grey.
+2. **Record identifiers.** `rec 01.004` = subject 01, the fourth record in that subject (oldest is 001), computed from the content at build time. Shown on archive rows, the selected video record and the article margin. Hidden on phones.
+3. **Selected record.** The newest video on a topic page, with its subject artwork behind the title.
+4. **Observed.** One plain term per subject (*metering*, *physical capacity*, *judgement*), shown at most once or twice on a page.
+5. **Subject indices** `01 02 03` before the three subjects in the navigation and in the homepage rows.
+6. Carried over: the `tharshan.ai_` wordmark (static underscore), dotted dates `2026.09.30`, `§ 1` above article sections, `■ end`, inverse-video focus and selection.
 
-## Old-computer details (the complete list; resist adding more)
-
-- Wordmark `tharshan.ai_` with a static green underscore. It never blinks.
-- Navigation brackets `[ writing ]` appear on the current page and on hover.
-- Dotted ISO dates: `2026.09.30`.
-- Numbered section markers: `01 / writing ─────── all →`.
-- `§ 1` above article section headings; `//` before small labels.
-- `>` marker slides in beside list titles and contents entries on hover.
-- A block cursor appears after `read →` on hover.
-- **Inverse-video** keyboard focus and text selection (light on dark, dark on light).
-- Footnote references as `[1]`; articles end with `■ end`.
-
-Explicitly out of scope: typing animations, boot sequences, prompts, glow, scanlines,
-CRT effects, pixel fonts, ASCII art.
+**Vocabulary ceiling.** Don't add terms beyond these, even where the grammar would support them. The site must be understandable without decoding the interface. Out of scope: typing or boot animations, glitch, scanlines, flicker, fake readouts, show references, terminal commands, dashboards.
 
 ## Layout
 
-- Wide container (74rem) with a 10rem mono metadata column on the left at desktop widths.
-  Content sits in the right column, so the page reads as annotation + text.
-- Ruled rows, not cards. The only boxed elements are callouts and code.
-- The homepage leads with a thesis and writing. The biography comes last and stays small.
-- Mobile is designed separately: the metadata column stacks above the content, the
-  navigation wraps under the wordmark (no hamburger), tables scroll sideways, and type
-  sizes are fluid.
+- Wide container (74rem) with a 10rem mono metadata column at desktop widths.
+- Ruled rows, not card grids. The only boxed elements are the research record card, the model-capability box, callouts and code.
+- **Homepage**: thesis → three subject rows (each with a small viewport onto its subject image on desktop) → one research line → a one-line context → footer.
+- **Topic pages**: introduction beside the subject image (one column without an image) → selected record → archive rows with record identifiers → (Human-Wrapped AI only) the research lineage.
+- **Human-Wrapped AI**: `MODEL CAPABILITY · 1 component of 8`, then the seven conditions "wrapped by the other 7". It is a reading list, not a dashboard.
+- **Articles**: new interface around a historical document. An optional cover, a record block in the margin (`rec`, original-media count), then a quiet body: no rulers, no corners, no labels other than the `original media · unaltered` frame around historical images.
+- **Research**: the formal archive. `doc 001`, peer-reviewed status and a ruled bibliographic card. No imagery, no further machine styling.
 
-## Articles
+## Mobile: editorial first, system second
 
-- A sticky mono contents list in the left column (desktop), built from `##` headings.
-- Margin footnotes (sidenotes) on wide screens (≥84rem): a small script copies each
-  footnote beside the paragraph that cites it. On smaller screens, in print and without
-  JavaScript, footnotes stay as a list at the end.
-- Blockquotes: italic serif with a single green hairline; citation in mono.
-- Callouts: `// note` label; the `view` variant marks the author's own interpretation.
+Priority: content, then hierarchy, navigation, identity and decorative detail, in that order. On phones:
+
+- the navigation wraps onto two quiet lines (no indices, no sideways scrolling, tap targets ≥ 24px);
+- the counts line, "observed" labels in subject rows, record identifiers, the article record block and secondary captions are hidden;
+- subject images appear after the introduction, never before it;
+- only one short metadata line comes before the first line of writing.
 
 ## Motion
 
-Only ~120ms colour and opacity transitions. `prefers-reduced-motion` disables them.
-There is no scroll-linked motion or loading animation. Page JavaScript is limited to the citation
-copy button and the sidenotes script.
+Corner marks move a few pixels into place on hover and focus (≈160ms), and colours fade (≈120ms). Nothing loops, nothing scrolls the page, and nothing animates on load. `prefers-reduced-motion` turns all of it off.
+
+## Accessibility
+
+WCAG 2.2 AA: contrast ≥ 4.5:1 for text in both themes, visible inverse-video focus, a skip link, semantic headings, labelled theme toggle, decorative images with empty `alt`, subject images and covers with plain descriptions, and state shown by shape as well as colour. Checked with axe-core in both themes at desktop and phone widths.
 
 ## Components
 
-`Header`, `Footer`, `SectionHead` (numbered marker), `FeaturedWriting`, `WritingItem`,
-`ResearchItem` (with optional mono spec block), `VideoItem`, `Callout`, `Citation`,
-`Abstract`, `Figure`, `YouTube`, `TikTok`, `LinkedInEmbed`. Social share cards are
-generated at build time by `src/lib/og.ts` in the same identity.
+`Header`, `Footer`, `SectionHead`, `FeedItem` (archive row with record id), `VideoFeature` + `VideoTile` (selected record, optional artwork), `ModelCapability`, `WritingItem`, `ResearchItem` (doc number + record card), `VideoItem`, `Callout`, `Citation`, `Abstract`, `Figure`, `WrapQuadrant`, `YouTube`, `TikTok`, `LinkedInEmbed`.
+
+Libraries: `src/lib/topics.ts` (subjects, observed terms, optional visuals, record ids), `src/lib/artefacts.ts` (historical-media framing), `src/lib/og.ts` (share images).

@@ -18,6 +18,11 @@ export const SITE = {
   lang: 'en-GB',
   /** Where "Contact" points. */
   linkedin: 'https://www.linkedin.com/in/tharshant/',
+  /**
+   * Optional author photograph for the About page, e.g. '/images/tharshan.jpg' (put the file in public/images/).
+   * Leave undefined and the About page shows no image. It is never shown on the homepage.
+   */
+  authorPhoto: undefined as string | undefined,
 };
 
 /**

@@ -1,26 +1,29 @@
 ---
 import type { Research } from '../lib/content';
 import { slugOf } from '../lib/content';
-interface Props { entry: Research; spec?: boolean }
-const { entry, spec = false } = Astro.props;
+interface Props { entry: Research; spec?: boolean; n?: number }
+const { entry, spec = false, n = 1 } = Astro.props;
 const { title, description, venue, year, authors, type, volume, doi } = entry.data;
 const surnames = authors.map((a) => a.split(' ').slice(-1)[0]).join(', ');
 const href = `/research/${slugOf(entry)}`;
 ---
 <li class:list={['entry', 'res', { 'res--spec': spec }]}>
   <div class="entry-inner">
-    <p class="meta stack"><span class="a">{type.toLowerCase().includes('journal') ? 'peer-reviewed' : type.toLowerCase()}</span><span>{year}</span></p>
+    <p class="meta stack">{spec && <span class="doc">doc {String(n).padStart(3, '0')}</span>}<span class="a">{type.toLowerCase().includes('journal') ? 'peer-reviewed' : type.toLowerCase()}</span><span>{year}</span></p>
     <div>
       <h3 class="entry-title"><a href={href}>{title}</a></h3>
       <p class="entry-desc">{description}</p>
     </div>
     {spec ? (
+      <div class="card acq">
+      <i class="k tl"></i><i class="k tr"></i><i class="k bl"></i><i class="k br"></i>
       <dl class="spec spec--ruled">
         <dt>journal</dt><dd>{venue}</dd>
         <dt>year</dt><dd>{year}{volume && <> · vol. {volume}</>}</dd>
         <dt>authors</dt><dd>{surnames}</dd>
         {doi && <><dt>doi</dt><dd><a href={`https://doi.org/${doi}`} rel="noopener">{doi}</a></dd></>}
       </dl>
+      </div>
     ) : (
       <p class="meta entry-end"><span>{venue}</span></p>
     )}
@@ -34,4 +37,7 @@ const href = `/research/${slugOf(entry)}`;
     .res:not(.res--spec) .entry-inner { grid-template-columns: var(--side) minmax(0, 1fr) 12rem; }
   }
   .res--spec .entry-title { font-size: var(--step-2); }
+  .doc { color: var(--text); letter-spacing: 0.08em; }
+  .card { padding: 1rem 1.1rem; background: var(--bg-2); }
+  .card .spec--ruled { border-left: 0; padding-left: 0; }
 </style>

@@ -60,6 +60,12 @@ const writing = defineCollection({
           caption: z.string().optional(),
         })
         .optional(),
+      /**
+       * Optional tharshan.ai cover visual (docs/visual-system.md). Never required.
+       * `addedLater: true` marks a cover created after the article was first published,
+       * so readers can tell the current interface from the historical article.
+       */
+      cover: z.object({ src: image(), alt: z.string(), caption: z.string().optional(), addedLater: z.boolean().default(false) }).optional(),
       references: z.array(reference).default([]),
       /** Optional companion video: the file name (without .md) of an entry in src/content/videos. */
       video: ref('videos').optional(),

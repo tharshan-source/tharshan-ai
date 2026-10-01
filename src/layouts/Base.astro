@@ -70,7 +70,7 @@ const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
         var t = 'dark';
         try { if (localStorage.getItem('theme') === 'light') t = 'light'; } catch (e) {}
         document.documentElement.setAttribute('data-theme', t);
-        if (t === 'light') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f3f0e8');
+        if (t === 'light') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f4f4f1');
       })();
     </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

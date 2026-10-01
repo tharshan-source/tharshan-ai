@@ -12,6 +12,7 @@ const all = await getVideos();
     <p class="lede">Every video, newest first. Each one opens on the platform it was published on. For subjects, start with <a href="/ai-economics">AI Economics</a>, <a href="/ai-infrastructure">AI Infrastructure</a> or <a href="/human-wrapped-ai">Human-Wrapped AI</a>.</p>
   </header>
   <div class="wrap">
+    <h2 class="visually-hidden">All videos</h2>
     <ul class="list">{all.map((entry) => <VideoItem entry={entry} />)}</ul>
     <p class="mono more"><a href={`${SITE.linkedin}recent-activity/videos/`} rel="noopener" target="_blank">all videos on linkedin ↗<span class="visually-hidden"> (opens in a new tab)</span></a></p>
   </div>

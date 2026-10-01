@@ -7,8 +7,10 @@ import Base from '../layouts/Base.astro';
 import SectionHead from '../components/SectionHead.astro';
 import VideoFeature from '../components/VideoFeature.astro';
 import FeedItem from '../components/FeedItem.astro';
-import { TOPIC_LIST, getTopicFeed, getLatestVideo, type Topic } from '../lib/topics';
-import { getResearch, slugOf } from '../lib/content';
+import { Image } from 'astro:assets';
+import ModelCapability from '../components/ModelCapability.astro';
+import { TOPIC_LIST, getTopicFeed, getLatestVideo, recordIds, type Topic } from '../lib/topics';
+import { getResearch, slugOf, dotDate } from '../lib/content';
 import { SITE } from '../site.config';
 
 export function getStaticPaths() {
@@ -19,6 +21,9 @@ const { t } = Astro.props as { t: Topic };
 const latestVideo = await getLatestVideo(t.slug);
 const feed = (await getTopicFeed(t.slug)).filter((i) => !(latestVideo && i.kind === 'video' && i.entry.id === latestVideo.id));
 const isLens = t.slug === 'human-wrapped-ai';
+const all = await getTopicFeed(t.slug);
+const recs = await recordIds(t.slug);
+const lastDate = all[0]?.date;
 const frl = isLens ? (await getResearch()).find((r) => r.id === 'female-representation-boards-carbon-emissions') : undefined;
 
 const jsonLd = [
@@ -41,38 +46,39 @@ const jsonLd = [
   },
 ];
 ---
-<Base title={t.title} description={t.descriptor} jsonLd={jsonLd}>
-  <header class="wrap page-head topic-head">
-    <p class="mono kicker"><span class="a">{t.n}</span> / {t.title.toLowerCase()}</p>
+<Base title={t.title} description={t.descriptor} image={`/og/${t.slug}.png`} imageAlt={`${t.title}: ${t.descriptor}`} jsonLd={jsonLd}>
+  <header class:list={['wrap page-head topic-head', t.visual ? 'has-visual' : 'no-visual']}>
+    <div class="th-text">
+    <p class="mono kicker"><span class="a">{t.n}</span> / {t.title.toLowerCase()}<span class="kx"> · {all.length} records</span></p>
     <h1>{t.title.split(' ').map((w, i) => <>{i > 0 && ' '}<span class="nw">{w}</span></>)}</h1>
     {isLens ? (
       <div class="lens">
         <p class="lede">AI outcomes don’t emerge from model capability alone. They’re shaped by the people, organisations, incentives, economics, infrastructure, governance and constraints wrapped around the technology.</p>
         <p class="lens-q">So the question here is rarely just what a model can do. It’s what happens when that capability meets:</p>
-        <ul class="meets mono">
-          <li>this specific use case</li>
-          <li>these people</li>
-          <li>this organisation</li>
-          <li>these incentives</li>
-          <li>this economic model</li>
-          <li>this infrastructure</li>
-          <li>these governance constraints</li>
-        </ul>
+        <ModelCapability />
         <p class="lens-note">A working lens, not a framework. It gets sharper with each real use case.</p>
       </div>
     ) : (
       <p class="lede">{t.descriptor}</p>
     )}
     {t.covers.length > 0 && <p class="meta covers">{t.covers.map((c) => <span>{c}</span>)}</p>}
+    {!t.visual && <p class="sys th-reg"><span><span class="a">{t.n}</span> / observed: <span class="t">{t.observed}</span></span>{lastDate && <span>last record {dotDate(lastDate)}</span>}</p>}
+    </div>
+    {t.visual && (
+      <figure class="obs th-visual">
+        <Image src={t.visual.key} alt={t.visual.alt} widths={[640, 960, 1280, 1600]} sizes="(min-width: 64rem) 36rem, 100vw" loading="eager" fetchpriority="high" />
+        <figcaption class="sys"><span><span class="a">{t.n}</span> / observed: <span class="t">{t.observed}</span></span>{lastDate && <span class="lr">last record {dotDate(lastDate)}</span>}</figcaption>
+      </figure>
+    )}
   </header>
 
   <div class="wrap">
-    {latestVideo && <VideoFeature entry={latestVideo} current={t.slug} />}
+    {latestVideo && <VideoFeature entry={latestVideo} current={t.slug} rec={recs.get(`video:${latestVideo.id}`)} />}
 
     {feed.length > 0 && (
       <section class="section feed" aria-labelledby="h-feed">
         <SectionHead id="h-feed" title={latestVideo ? 'More on this' : 'Everything on this'} />
-        <ul class="entries">{feed.map((item) => <FeedItem item={item} current={t.slug} />)}</ul>
+        <ul class="entries">{feed.map((item) => <FeedItem item={item} current={t.slug} rec={recs.get(`${item.kind}:${item.entry.id}`)} />)}</ul>
       </section>
     )}
 
@@ -94,6 +100,15 @@ const jsonLd = [
 </Base>
 
 <style>
+  .kx { color: var(--faint); }
+  .th-visual { margin-top: 2.5rem; }
+  .th-reg { display: flex; flex-wrap: wrap; gap: 0.4rem 2rem; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--rule); max-width: 40rem; }
+  @media (min-width: 64rem) {
+    .topic-head.has-visual { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3rem; align-items: start; }
+    .topic-head.has-visual .th-visual { margin-top: 0.35rem; }
+    .topic-head.has-visual h1 { font-size: clamp(2.6rem, 0.6rem + 3.6vw, 4rem); }
+  }
+  @media (max-width: 40rem) { .kx, .lr { display: none; } }
   .topic-head h1 { font-size: clamp(2.15rem, 0.6rem + 8vw, 5.6rem); letter-spacing: -0.035em; line-height: 1; }
   .topic-head .lede { max-width: 34rem; }
   .nw { white-space: nowrap; }
@@ -101,10 +116,6 @@ const jsonLd = [
   .lens { max-width: 40rem; }
   .lens .lede { max-width: none; color: var(--text); }
   .lens-q { margin-top: 1.4rem; color: var(--muted); font-size: 1.05rem; }
-  .meets { list-style: none; margin: 1rem 0 0; padding: 0; font-size: 0.82rem; color: var(--text); }
-  .meets li { padding: 0.45rem 0; border-top: 1px solid var(--rule); }
-  .meets li:last-child { border-bottom: 1px solid var(--rule); }
-  .meets li::before { content: '→ '; color: var(--accent); }
   .lens-note { margin-top: 1.25rem; color: var(--muted); font-size: 1rem; font-style: italic; }
   .feed { padding-top: clamp(2.5rem, 6vw, 4.5rem); }
   .bridge-body { max-width: var(--measure); color: var(--prose); font-size: 1.05rem; line-height: 1.65; }

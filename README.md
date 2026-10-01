@@ -35,7 +35,7 @@ The site is organised by **subject**, not by format. There are three subjects, a
 | `ai-infrastructure` | /ai-infrastructure |
 | `human-wrapped-ai` | /human-wrapped-ai |
 
-Every article and every video has one primary `topic:` and optional `related:` topics. It appears on each of those topic pages automatically, but it only ever has one URL. Topic titles, intros and the homepage descriptors live in `src/lib/topics.ts`.
+Every article and every video has one primary `topic:` and optional `related:` topics. It appears on each of those topic pages automatically, but it only ever has one URL. Topic titles, intros, homepage descriptors, each subject's *observed* term and its optional subject image live in `src/lib/topics.ts`.
 
 /research is for formal, academic research only. /writing and /videos still exist as plain archive pages, but they aren't in the navigation.
 
@@ -55,12 +55,15 @@ Every article and every video has one primary `topic:` and optional `related:` t
    | `format` | yes | `essay`, `note`, `analysis`, `research note` or `experiment` |
    | `draft` | no | `true` keeps it off the live site |
    | `video` | no | a companion video's file name, e.g. `the-wrap-framework`. Adds “also as a video ↗” at the end of the article |
+   | `cover` | no | an optional tharshan.ai cover image; see `docs/visual-system.md` §6. Most articles don't need one |
    | `featured`, `updated`, `slug`, `hero`, `references`, `tags`, `originallyPublished` | no | see the example article |
 
 4. Write in Markdown below the frontmatter. Headings, quotes, lists, links, tables, footnotes (`[^1]`), images and code blocks all work.
 5. Set `draft: false`, commit. It appears on its topic page(s), the writing archive, RSS and the sitemap, with its own share image.
 
 Use `.mdx` instead of `.md` only if you want components such as `<Callout>`, `<YouTube>` or `<LinkedInEmbed>`.
+
+Images inside an article are *original media*: they are shown exactly as you add them, framed with a small “original media · as published … · unaltered” label. Never run them through the cover pipeline.
 
 Images: put stills in `src/content/writing/images/` and use `![alt](./images/file.png)`; they're optimised automatically. Animated GIFs/WebPs go in `public/images/writing/` and are added with a plain `<img>` tag, so the animation survives (see `the-end-of-elastic.md`).
 
@@ -130,12 +133,17 @@ src/
   content.config.ts  ← the fields each content type accepts
   site.config.ts     ← name, links, navigation
   pages/           ← one file per route ([topic].astro builds the three topic pages)
-  lib/topics.ts    ← the three subjects, their intros, and the latest-video logic
+  lib/topics.ts    ← the three subjects, intros, observed terms, subject images, record ids, latest video
+  lib/artefacts.ts ← frames original article media (never alters it)
+  lib/og.ts        ← share images
+  assets/subjects/ ← the three canonical subject images (key, fragment, artwork)
   layouts/         ← Base (head, SEO, header, footer) and Article
   components/      ← small reusable pieces (lists, callouts, citation, embeds)
   styles/global.css  ← the design system (colours, type, spacing)
 public/            ← files served as-is (favicon, _headers)
-DESIGN.md          ← why the site looks the way it does
+DESIGN.md          ← the interface: type, colour, the observation grammar, mobile
+docs/visual-system.md ← the image system
+tools/visuals/     ← the image pipeline (dev-only) and photo sources
 ```
 
-Design decisions are documented in [`DESIGN.md`](DESIGN.md).
+Design decisions are documented in [`DESIGN.md`](DESIGN.md) (interface) and [`docs/visual-system.md`](docs/visual-system.md) (imagery, covers, share images, historical media). Subject images are rebuilt with `python3 tools/visuals/make.py` (a local, dev-only tool; sources and licences in `tools/visuals/SOURCES.md`).

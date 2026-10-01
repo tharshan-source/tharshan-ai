@@ -6,12 +6,13 @@ const all = await getResearch();
 ---
 <Base title="Doctoral research" description="Published and peer-reviewed research by Tharshan Thavaharan on corporate governance and carbon outcomes.">
   <header class="wrap page-head">
-    <p class="mono kicker"><span class="a">research</span> / formal &amp; academic — {all.length} {all.length === 1 ? 'paper' : 'papers'}</p>
+    <p class="mono kicker"><span class="a">research</span> / formal archive · {all.length} {all.length === 1 ? 'document' : 'documents'} · peer-reviewed</p>
     <h1>Doctoral research</h1>
     <p class="lede">Published and substantive research. My doctoral work at Paris School of Business looks at how corporate governance shapes carbon outcomes.</p>
   </header>
   <div class="wrap">
-    <ul class="entries">{all.map((entry) => <ResearchItem entry={entry} spec />)}</ul>
+    <h2 class="visually-hidden">Papers</h2>
+    <ul class="entries">{all.map((entry, i) => <ResearchItem entry={entry} spec n={i + 1} />)}</ul>
     <p class="mono note">// essays, notes and analysis live under the subjects: <a href="/ai-economics">ai economics</a> · <a href="/ai-infrastructure">ai infrastructure</a> · <a href="/human-wrapped-ai">human-wrapped ai</a></p>
   </div>
 </Base>

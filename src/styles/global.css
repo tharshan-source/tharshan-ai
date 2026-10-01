@@ -1,6 +1,6 @@
 /*
- * tharshan.ai design system: "Terminal Editorial"
- * See DESIGN.md for the reasoning behind these choices.
+ * tharshan.ai design system: a human editorial archive viewed through a quiet machine interface.
+ * See DESIGN.md (interface) and docs/visual-system.md (imagery) for the reasoning.
  *
  * Dark by default; a light companion theme is available via the header toggle.
  * Two typographic voices: IBM Plex Serif for ideas and prose,
@@ -43,18 +43,19 @@
 /* Light companion theme: chosen by the reader via the dark / light control
    (stored in localStorage). Dark is the default for first-time visitors. */
 :root[data-theme='light'] {
-  --bg: #f3f0e8;
-  --bg-2: #e9e5da;
-  --text: #1a1c1d;
-  --prose: #26292a;
-  --muted: #55534e;
-  --faint: #67645d;
-  --rule: #d6d1c5;
-  --rule-2: #bfb9ac;
-  --accent: #336b3a;
-  --accent-2: #24522a;
-  --inv-bg: #1a1c1d;
-  --inv-fg: #f3f0e8;
+  /* Clinical companion: cooler and cleaner than the dark observer, same structure. */
+  --bg: #f4f4f1;
+  --bg-2: #eaeae6;
+  --text: #121415;
+  --prose: #1d2021;
+  --muted: #4c4f50;
+  --faint: #5f6263;
+  --rule: #d8d9d5;
+  --rule-2: #b9bbb7;
+  --accent: #2e6a3a;
+  --accent-2: #1f4f29;
+  --inv-bg: #121415;
+  --inv-fg: #f4f4f1;
   color-scheme: light;
 }
 
@@ -317,3 +318,35 @@ a:hover { color: var(--accent-2); }
 /* A section marker already draws a rule; don't double it */
 .marker + .entries, .marker + .empty { border-top: 0; }
 .marker + .entries > .entry:first-child > a, .marker + .entries > .entry:first-child > .entry-inner { padding-top: 0.25rem; }
+
+/* ---------- Observation grammar (the complete set; see DESIGN.md) ---------- */
+/* Acquisition corners: <a class="acq"><i class="k tl"></i>…</a>. Green only when something is selected. */
+.acq { position: relative; }
+.acq > .k { position: absolute; width: 0.8rem; height: 0.8rem; border: 0 solid var(--k, var(--rule-2)); pointer-events: none;
+  transition: transform 160ms ease, border-color 140ms ease; }
+.acq > .k.tl { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; }
+.acq > .k.tr { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; }
+.acq > .k.bl { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; }
+.acq > .k.br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
+.acq.signal { --k: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .acq > .k { transition: none; } }
+
+/* System label: small mono uppercase. Use sparingly; never above the first line of an argument on phones. */
+.sys { font: 400 0.68rem/1.45 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); }
+.sys .a { color: var(--accent); }
+.sys .t { color: var(--text); }
+
+/* Subject image, framed by the system */
+.obs { margin: 0; }
+.obs img { width: 100%; height: auto; display: block; background: #0d0f10; }
+.obs figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.3rem 1.5rem; margin-top: 0.7rem; }
+
+/* Historical artefact: original article media, labelled, never altered */
+.prose .artefact { margin-block: 2.4em; }
+.prose .artefact-head { display: flex; justify-content: space-between; gap: 1rem; margin: 0 0 0.9rem; padding-bottom: 0.55rem; border-bottom: 1px dashed var(--rule-2); }
+.prose .artefact-head > * { margin: 0; }
+.prose .artefact-body > * { margin: 0; }
+.prose .artefact img { border: 0; }
+
+/* Record identifier */
+.rec { font: 400 0.68rem/1 var(--mono); letter-spacing: 0.06em; color: var(--faint); }

@@ -1,0 +1,36 @@
+---
+/**
+ * The Human-Wrapped AI thesis as interface: the model is one component of eight,
+ * wrapped by the conditions around it. Indices are the system (mono); the conditions
+ * are the human argument (serif). Keep it a reading list, not a dashboard.
+ */
+const conditions = [
+  'this specific use case',
+  'these people',
+  'this organisation',
+  'these incentives',
+  'this economic model',
+  'this infrastructure',
+  'these governance constraints',
+];
+---
+<div class="mc">
+  <p class="model acq signal"><i class="k tl"></i><i class="k tr"></i><i class="k bl"></i><i class="k br"></i><span class="m-name">model capability</span><span class="m-n">1 component of {conditions.length + 1}</span></p>
+  <p class="wrapped" id="mc-label">wrapped by the other {conditions.length}</p>
+  <ol class="conds" aria-labelledby="mc-label">
+    {conditions.map((c, i) => <li><span class="cx" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span class="cv">{c}</span></li>)}
+  </ol>
+</div>
+<style>
+  .mc { margin-top: 1.2rem; max-width: 34rem; }
+  .model { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; margin: 0; padding: 0.75rem 0.9rem; font: 400 0.8rem/1.2 var(--mono); }
+  .m-name { color: var(--text); text-transform: uppercase; letter-spacing: 0.06em; }
+  .m-n { color: var(--accent); font-size: 0.7rem; }
+  .wrapped { margin: 0.9rem 0 0 1.1rem; font: 400 0.64rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); }
+  .conds { list-style: none; margin: 0.35rem 0 0 1.1rem; padding: 0 0 0 1.1rem; border-left: 1px solid var(--rule-2); }
+  .conds li { position: relative; display: grid; grid-template-columns: 2rem minmax(0, 1fr); gap: 0.6rem; align-items: baseline; padding: 0.42rem 0; border-bottom: 1px solid var(--rule); }
+  .conds li:last-child { border-bottom: 0; }
+  .conds li::before { content: ''; position: absolute; left: -1.1rem; top: 1.05rem; width: 0.75rem; border-top: 1px solid var(--rule-2); }
+  .cx { color: var(--faint); font: 400 0.68rem/1 var(--mono); }
+  .cv { color: var(--text); font-family: var(--serif); font-size: 1.06rem; line-height: 1.35; }
+</style>
